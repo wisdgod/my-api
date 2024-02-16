@@ -341,17 +341,16 @@ func Relay(c *gin.Context) {
 					{
 						"index": 0,
 						"message": map[string]string{
-							"role":    "assistant",
+							"role": "assistant",
 							"content": "内容违规。请访问 [OpenAI内容安全政策审查工具](https://check.openai.wisdgod.com/) 测试具体违规内容。",
 						},
-						"logprobs":      nil,
+						"logprobs": nil,
 						"finish_reason": "stop",
 					},
 				},
 			})
 			return
 		}		
-	}	
 	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/completions") {
 		relayMode = RelayModeCompletions
 	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/embeddings") {
