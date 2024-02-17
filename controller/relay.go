@@ -340,7 +340,7 @@ func Relay(c *gin.Context) {
 				"finish_reason": "你违规了！",
 			})
 			return
-		}		
+		}
 	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/completions") {
 		relayMode = RelayModeCompletions
 	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/embeddings") {
@@ -384,7 +384,7 @@ func Relay(c *gin.Context) {
 			c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?retry=%d&error=%s", c.Request.URL.Path, retryTimes-1, err.Message))
 		} else {
 			if err.StatusCode == http.StatusTooManyRequests {
-				//err.OpenAIError.Message = "当前分组上游负载已饱和，请稍后再试"
+				err.OpenAIError.Message = "当前分组上游负载已饱和，请稍后再试吧~"
 			}
 			err.OpenAIError.Message = common.MessageWithRequestId(err.OpenAIError.Message, requestId)
 			c.JSON(err.StatusCode, gin.H{
