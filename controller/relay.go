@@ -334,20 +334,10 @@ func Relay(c *gin.Context) {
 		if violation {
 			// 如果被标记为违规，构建特定的响应体
 			c.JSON(http.StatusOK, gin.H{
-				"object": "chat.completion",
 				"created": time.Now().Unix(),
 				"model": "moderation",
-				"choices": []map[string]interface{}{
-					{
-						"index": 0,
-						"message": map[string]string{
-							"role": "assistant",
-							"content": "内容违规。请访问 [OpenAI内容安全政策审查工具](https://check.openai.wisdgod.com/) 测试具体违规内容。",
-						},
-						"logprobs": nil,
-						"finish_reason": "stop",
-					},
-				},
+				"error": "内容违规。请访问 [OpenAI内容安全政策审查工具](https://check.openai.wisdgod.com/) 测试具体违规内容。",
+				"finish_reason": "你违规了！",
 			})
 			return
 		}		
