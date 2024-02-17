@@ -303,44 +303,6 @@ func Relay(c *gin.Context) {
 	relayMode := RelayModeUnknown
 	if strings.HasPrefix(c.Request.URL.Path, "/v1/chat/completions") {
 		relayMode = RelayModeChatCompletions
-		
-		// 读取请求体
-		var requestBody map[string]interface{}
-		if err := c.BindJSON(&requestBody); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "无法解析请求体"})
-			return
-		}
-		
-		// 检查 messages 字段是否存在
-		messages, ok := requestBody["messages"]
-		if !ok {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "请求中缺少 messages 字段"})
-			return
-		}
-		
-		// 将 messages 数组转换为 JSON 字符串
-		messagesStr, err := json.Marshal(messages)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "内部错误：无法序列化 messages"})
-			return
-		}
-		
-		// 调用审查函数，将整个 messages 数组作为字符串审查
-		violation, err := CheckContent(string(messagesStr))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "审查服务不可用"})
-			return
-		}
-		if violation {
-			// 如果被标记为违规，构建特定的响应体
-			c.JSON(http.StatusOK, gin.H{
-				"created": time.Now().Unix(),
-				"model": "moderation",
-				"error": "内容违规。请访问 [OpenAI内容安全政策审查工具](https://check.openai.wisdgod.com/) 测试具体违规内容。",
-				"finish_reason": "你违规了！",
-			})
-			return
-		}
 	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/completions") {
 		relayMode = RelayModeCompletions
 	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/embeddings") {
