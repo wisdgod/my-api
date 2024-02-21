@@ -38,14 +38,14 @@ const Footer = () => {
         ) : (
           <div className='custom-footer'>
             <a
-              href='https://github.com/Calcium-Ion/new-api'
+              href='https://github.com/wisdgod/new-api'
               target='_blank'
             >
               My API {process.env.REACT_APP_VERSION}{' '}
             </a>
             由{' '}
-            <a href='https://github.com/Calcium-Ion' target='_blank'>
-              Calcium-Ion
+            <a href='https://github.com/wisdgod' target='_blank'>
+              wisdgod
             </a>{' '}
             开发，基于{' '}
             <a href='https://github.com/songquanpeng/one-api' target='_blank'>
