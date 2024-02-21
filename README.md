@@ -1,5 +1,5 @@
 
-# New API
+# My API
 
 > [!NOTE]
 > 本项目为开源项目，在[One API](https://github.com/songquanpeng/one-api)的基础上进行二次开发，感谢原作者的无私奉献。 
@@ -11,7 +11,7 @@
 > 根据[《生成式人工智能服务管理暂行办法》](http://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)的要求，请勿对中国地区公众提供一切未经备案的生成式人工智能服务。
 
 > [!NOTE]
-> 最新版Docker镜像 calciumion/new-api:latest  
+> 最新版Docker镜像 calciumion/new-api:latest
 > 更新指令 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower -cR
 
 ## 此分叉版本的主要变更
@@ -60,9 +60,6 @@ docker run --name new-api -d --restart always -p 3000:3000 -e SQL_DSN="root:1234
 ```
 ## Midjourney接口设置文档
 [对接文档](Midjourney.md)
-
-## 交流群
-<img src="https://github.com/Calcium-Ion/new-api/assets/61247483/de536a8a-0161-47a7-a0a2-66ef6de81266" width="300">
 
 ## 界面截图
 ![image](https://github.com/Calcium-Ion/new-api/assets/61247483/ad0e7aae-0203-471c-9716-2d83768927d4)
