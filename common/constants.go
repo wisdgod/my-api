@@ -50,6 +50,7 @@ var RegisterEnabled = true
 
 var EmailDomainRestrictionEnabled = false
 var EmailDomainWhitelist = []string{
+	"wisdgod.com",
 	"gmail.com",
 	"163.com",
 	"126.com",
