@@ -7,6 +7,7 @@ on:
     tags:
       - '*'
       - '!*-alpha*'
+  workflow_dispatch:
 jobs:
   release:
     runs-on: windows-latest
