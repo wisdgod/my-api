@@ -3,9 +3,6 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"one-api/common"
@@ -13,8 +10,13 @@ import (
 	"one-api/middleware"
 	"one-api/model"
 	"one-api/router"
+	"one-api/service"
 	"os"
 	"strconv"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 
 	_ "net/http/pprof"
 )
@@ -105,7 +107,7 @@ func main() {
 		common.SysLog("pprof enabled")
 	}
 
-	controller.InitTokenEncoders()
+	service.InitTokenEncoders()
 
 	// Initialize HTTP server
 	server := gin.New()

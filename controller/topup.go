@@ -9,7 +9,9 @@ import (
 	"net/url"
 	"one-api/common"
 	"one-api/model"
+	"one-api/service"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -55,14 +57,14 @@ func RequestEpay(c *gin.Context) {
 		c.JSON(200, gin.H{"message": err.Error(), "data": 10})
 		return
 	}
-	if req.Amount < 1 {
-		c.JSON(200, gin.H{"message": "充值金额不能小于1", "data": 10})
+	if req.Amount < common.MinTopUp {
+		c.JSON(200, gin.H{"message": fmt.Sprintf("充值数量不能小于 %d", common.MinTopUp), "data": 10})
 		return
 	}
 
 	id := c.GetInt("id")
 	user, _ := model.GetUserById(id, false)
-	amount := GetAmount(float64(req.Amount), *user)
+	payMoney := GetAmount(float64(req.Amount), *user)
 
 	var payType epay.PurchaseType
 	if req.PaymentMethod == "zfb" {
@@ -72,11 +74,10 @@ func RequestEpay(c *gin.Context) {
 		req.PaymentMethod = "wxpay"
 		payType = epay.WechatPay
 	}
-
+	callBackAddress := service.GetCallbackAddress()
 	returnUrl, _ := url.Parse(common.ServerAddress + "/log")
-	notifyUrl, _ := url.Parse(common.ServerAddress + "/api/user/epay/notify")
+	notifyUrl, _ := url.Parse(callBackAddress + "/api/user/epay/notify")
 	tradeNo := strconv.FormatInt(time.Now().Unix(), 10)
-	payMoney := amount
 	client := GetEpayClient()
 	if client == nil {
 		c.JSON(200, gin.H{"message": "error", "data": "当前管理员未配置支付信息"})
@@ -111,6 +112,33 @@ func RequestEpay(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "success", "data": params, "url": uri})
 }
 
+// tradeNo lock
+var orderLocks sync.Map
+var createLock sync.Mutex
+
+// LockOrder 尝试对给定订单号加锁
+func LockOrder(tradeNo string) {
+	lock, ok := orderLocks.Load(tradeNo)
+	if !ok {
+		createLock.Lock()
+		defer createLock.Unlock()
+		lock, ok = orderLocks.Load(tradeNo)
+		if !ok {
+			lock = new(sync.Mutex)
+			orderLocks.Store(tradeNo, lock)
+		}
+	}
+	lock.(*sync.Mutex).Lock()
+}
+
+// UnlockOrder 释放给定订单号的锁
+func UnlockOrder(tradeNo string) {
+	lock, ok := orderLocks.Load(tradeNo)
+	if ok {
+		lock.(*sync.Mutex).Unlock()
+	}
+}
+
 func EpayNotify(c *gin.Context) {
 	params := lo.Reduce(lo.Keys(c.Request.URL.Query()), func(r map[string]string, t string, i int) map[string]string {
 		r[t] = c.Request.URL.Query().Get(t)
@@ -122,6 +150,7 @@ func EpayNotify(c *gin.Context) {
 		_, err := c.Writer.Write([]byte("fail"))
 		if err != nil {
 			log.Println("易支付回调写入失败")
+			return
 		}
 	}
 	verifyInfo, err := client.Verify(params)
@@ -135,11 +164,19 @@ func EpayNotify(c *gin.Context) {
 		if err != nil {
 			log.Println("易支付回调写入失败")
 		}
+		log.Println("易支付回调签名验证失败")
+		return
 	}
 
 	if verifyInfo.TradeStatus == epay.StatusTradeSuccess {
 		log.Println(verifyInfo)
+		LockOrder(verifyInfo.ServiceTradeNo)
+		defer UnlockOrder(verifyInfo.ServiceTradeNo)
 		topUp := model.GetTopUpByTradeNo(verifyInfo.ServiceTradeNo)
+		if topUp == nil {
+			log.Printf("易支付回调未找到订单: %v", verifyInfo)
+			return
+		}
 		if topUp.Status == "pending" {
 			topUp.Status = "success"
 			err := topUp.Update()
@@ -169,8 +206,8 @@ func RequestAmount(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "error", "data": "参数错误"})
 		return
 	}
-	if req.Amount < 1 {
-		c.JSON(200, gin.H{"message": "error", "data": "充值金额不能小于1"})
+	if req.Amount < common.MinTopUp {
+		c.JSON(200, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", common.MinTopUp)})
 		return
 	}
 	id := c.GetInt("id")

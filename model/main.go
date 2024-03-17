@@ -5,9 +5,11 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"log"
 	"one-api/common"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -17,8 +19,8 @@ func createRootAccountIfNeed() error {
 	var user User
 	//if user.Status != common.UserStatusEnabled {
 	if err := DB.First(&user).Error; err != nil {
-		common.SysLog("no user exists, create a root user for you: username is root, password is 958022263931")
-		hashedPassword, err := common.Password2Hash("958022263931")
+		common.SysLog("no user exists, create a root user for you: username is root, password is 123456")
+		hashedPassword, err := common.Password2Hash("123456")
 		if err != nil {
 			return err
 		}
@@ -60,6 +62,7 @@ func chooseDB() (*gorm.DB, error) {
 				dsn += "?parseTime=true"
 			}
 		}
+		common.UsingMySQL = true
 		return gorm.Open(mysql.Open(dsn), &gorm.Config{
 			PrepareStmt: true, // precompile SQL
 		})
@@ -89,6 +92,9 @@ func InitDB() (err error) {
 
 		if !common.IsMasterNode {
 			return nil
+		}
+		if common.UsingMySQL {
+			_, _ = sqlDB.Exec("DROP INDEX idx_channels_key ON channels;") // TODO: delete this line when most users have upgraded
 		}
 		common.SysLog("database migration started")
 		err = db.AutoMigrate(&Channel{})
@@ -147,4 +153,34 @@ func CloseDB() error {
 	}
 	err = sqlDB.Close()
 	return err
+}
+
+var (
+	lastPingTime time.Time
+	pingMutex    sync.Mutex
+)
+
+func PingDB() error {
+	pingMutex.Lock()
+	defer pingMutex.Unlock()
+
+	if time.Since(lastPingTime) < time.Second*10 {
+		return nil
+	}
+
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Printf("Error getting sql.DB from GORM: %v", err)
+		return err
+	}
+
+	err = sqlDB.Ping()
+	if err != nil {
+		log.Printf("Error pinging DB: %v", err)
+		return err
+	}
+
+	lastPingTime = time.Now()
+	common.SysLog("Database pinged successfully")
+	return nil
 }

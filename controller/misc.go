@@ -5,11 +5,28 @@ import (
 	"fmt"
 	"net/http"
 	"one-api/common"
+	"one-api/constant"
 	"one-api/model"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
+
+func TestStatus(c *gin.Context) {
+	err := model.PingDB()
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"success": false,
+			"message": "数据库连接失败",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Server is running",
+	})
+	return
+}
 
 func GetStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
@@ -20,6 +37,8 @@ func GetStatus(c *gin.Context) {
 			"email_verification":       common.EmailVerificationEnabled,
 			"github_oauth":             common.GitHubOAuthEnabled,
 			"github_client_id":         common.GitHubClientId,
+			"telegram_oauth":           common.TelegramOAuthEnabled,
+			"telegram_bot_name":        common.TelegramBotName,
 			"system_name":              common.SystemName,
 			"logo":                     common.Logo,
 			"footer_html":              common.Footer,
@@ -27,6 +46,7 @@ func GetStatus(c *gin.Context) {
 			"wechat_login":             common.WeChatAuthEnabled,
 			"server_address":           common.ServerAddress,
 			"price":                    common.Price,
+			"min_topup":                common.MinTopUp,
 			"turnstile_check":          common.TurnstileCheckEnabled,
 			"turnstile_site_key":       common.TurnstileSiteKey,
 			"top_up_link":              common.TopUpLink,
@@ -38,6 +58,9 @@ func GetStatus(c *gin.Context) {
 			"enable_drawing":           common.DrawingEnabled,
 			"enable_data_export":       common.DataExportEnabled,
 			"data_export_default_time": common.DataExportDefaultTime,
+			"default_collapse_sidebar": common.DefaultCollapseSidebar,
+			"enable_online_topup":      common.PayAddress != "" && common.EpayId != "" && common.EpayKey != "",
+			"mj_notify_enabled":        constant.MjNotifyEnabled,
 		},
 	})
 	return

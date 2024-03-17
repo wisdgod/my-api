@@ -3,10 +3,12 @@ package model
 import (
 	"errors"
 	"fmt"
-	"gorm.io/gorm"
 	"one-api/common"
+	"regexp"
 	"strings"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // User if you add sensitive fields, don't forget to clean them in setupLogin function.
@@ -21,6 +23,7 @@ type User struct {
 	Email            string         `json:"email" gorm:"index" validate:"max=50"`
 	GitHubId         string         `json:"github_id" gorm:"column:github_id;index"`
 	WeChatId         string         `json:"wechat_id" gorm:"column:wechat_id;index"`
+	TelegramId       string         `json:"telegram_id" gorm:"column:telegram_id;index"`
 	VerificationCode string         `json:"verification_code" gorm:"-:all"`                                    // this field is only for Email verification, don't save it to database!
 	AccessToken      string         `json:"access_token" gorm:"type:char(32);column:access_token;uniqueIndex"` // this token is for system management
 	Quota            int            `json:"quota" gorm:"type:int;default:0"`
@@ -170,6 +173,14 @@ func (user *User) Insert(inviterId int) error {
 			return err
 		}
 	}
+
+	// 在这里添加对用户名的正则表达式检查
+	regExp := regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
+	if !regExp.MatchString(user.Username) {
+		return errors.New("用户名包含非法字符，仅支持字母、数字、下划线(_)和横杠(-)")
+	}
+
+	// 用户名通过检查后，继续其他注册逻辑
 	user.Quota = common.QuotaForNewUser
 	user.AccessToken = common.GetUUID()
 	user.AffCode = common.GetRandomString(4)
@@ -238,6 +249,10 @@ func (user *User) ValidateAndFill() (err error) {
 	if user.Username == "" || password == "" {
 		return errors.New("用户名或密码为空")
 	}
+	// 检查是否使用邮箱作为用户名
+	if strings.Contains(user.Username, "@") {
+		return errors.New("本站仅支持使用用户名登录，不支持使用邮箱登录")
+	}
 	DB.Where(User{Username: user.Username}).First(user)
 	okay := common.ValidatePasswordAndHash(password, user.Password)
 	if !okay || user.Status != common.UserStatusEnabled {
@@ -286,6 +301,17 @@ func (user *User) FillUserByUsername() error {
 	return nil
 }
 
+func (user *User) FillUserByTelegramId() error {
+	if user.TelegramId == "" {
+		return errors.New("Telegram id 为空！")
+	}
+	err := DB.Where(User{TelegramId: user.TelegramId}).First(user).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("该 Telegram 账户未绑定")
+	}
+	return nil
+}
+
 func IsEmailAlreadyTaken(email string) bool {
 	return DB.Where("email = ?", email).Find(&User{}).RowsAffected == 1
 }
@@ -300,6 +326,10 @@ func IsGitHubIdAlreadyTaken(githubId string) bool {
 
 func IsUsernameAlreadyTaken(username string) bool {
 	return DB.Where("username = ?", username).Find(&User{}).RowsAffected == 1
+}
+
+func IsTelegramIdAlreadyTaken(telegramId string) bool {
+	return DB.Where("telegram_id = ?", telegramId).Find(&User{}).RowsAffected == 1
 }
 
 func ResetUserPasswordByEmail(email string, password string) error {
