@@ -32,7 +32,7 @@ const Footer = () => {
       <Layout.Content style={{ textAlign: 'center' }}>
         <div className="custom-footer">
           <a href="https://github.com/wisdgod/my-api" target="_blank" rel="noreferrer">
-            My API {import.meta.env.VITE_REACT_APP_VERSION}{' '}
+            My API {import.meta.env.REACT_APP_VERSION}{' '}
           </a>
           由{' '}
           <a href="https://github.com/wisdgod" target="_blank" rel="noreferrer">
