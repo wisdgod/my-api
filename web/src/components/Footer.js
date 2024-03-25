@@ -44,7 +44,7 @@ const Footer = () => {
           </a>{' '}
           与{' '}
           <a href="https://github.com/Calcium-Ion/new-api" target="_blank" rel="noreferrer">
-            New API v0.2.0.3-alpha.1
+            New API v0.2.1.0-alpha.16
           </a>{' '}
           ，本项目根据{' '}
           <a href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer">
