@@ -33,7 +33,7 @@ const Footer = () => {
         <div className="custom-footer">
           <a href="https://github.com/wisdgod/my-api" target="_blank" rel="noreferrer">
             My API {import.meta.env.VITE_REACT_APP_VERSION}{' '}
-          </a>{' '}
+          </a>
           由{' '}
           <a href="https://github.com/wisdgod" target="_blank" rel="noreferrer">
             wisdgod
@@ -54,7 +54,7 @@ const Footer = () => {
         </div>
       </Layout.Content>
     </Layout>
-  );
+  );  
 };
 
 export default Footer;
