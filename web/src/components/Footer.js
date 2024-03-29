@@ -46,11 +46,11 @@ const Footer = () => {
             </a>
             由{' '}
             <a
-              href='https://github.com/Calcium-Ion'
+              href='https://github.com/wisdgod'
               target='_blank'
               rel='noreferrer'
             >
-              Calcium-Ion
+              wisdgod
             </a>{' '}
             开发，基于{' '}
             <a
