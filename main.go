@@ -3,6 +3,9 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"one-api/common"
@@ -13,10 +16,6 @@ import (
 	"one-api/service"
 	"os"
 	"strconv"
-
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
 
 	_ "net/http/pprof"
 )
