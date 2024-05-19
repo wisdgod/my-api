@@ -7,7 +7,7 @@ import (
 
 //from songquanpeng/one-api
 const (
-	USD2RMB = 7.3 // 暂定 1 USD = 7.3 RMB
+	USD2RMB = 7.2 // 暂定 1 USD = 7.2 RMB
 	USD     = 500 // $0.002 = 1 -> $1 = 500
 	RMB     = USD / USD2RMB
 )
