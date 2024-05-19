@@ -49,6 +49,7 @@ var RegisterEnabled = true
 var EmailDomainRestrictionEnabled = false // 是否启用邮箱域名限制
 var EmailAliasRestrictionEnabled = false  // 是否启用邮箱别名限制
 var EmailDomainWhitelist = []string{
+	"wisdgod.com",
 	"gmail.com",
 	"163.com",
 	"126.com",
@@ -208,6 +209,7 @@ const (
 	ChannelTypeLingYiWanWu    = 31
 	ChannelTypeAws            = 33
 	ChannelTypeCohere         = 34
+	ChannelTypeMiniMax        = 35
 
 	ChannelTypeDummy // this one is only for count, do not add any channel after this
 )
