@@ -250,4 +250,5 @@ var ChannelBaseURLs = []string{
 	"",                                          //32
 	"",                                          //33
 	"https://api.cohere.ai",                     //34
+	"https://api.minimax.chat",                  //35
 }

@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"one-api/common"
+
+	"github.com/gin-gonic/gin"
 )
 
 func abortWithOpenAiMessage(c *gin.Context, statusCode int, message string) {

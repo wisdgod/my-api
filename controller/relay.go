@@ -3,7 +3,6 @@ package controller
 import (
 	"bytes"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
@@ -16,6 +15,8 @@ import (
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func relayHandler(c *gin.Context, relayMode int) *dto.OpenAIErrorWithStatusCode {
