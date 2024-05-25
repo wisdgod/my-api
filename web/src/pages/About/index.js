@@ -44,7 +44,7 @@ const About = () => {
                 https://github.com/wisdgod/my-api
               </a>
               <p>
-                My API © 2024 wisdgod | 基于 One API v0.5.4 © 2023 与 New API v0.2.3.5 © 2023
+                My API © 2024 wisdgod | 基于 One API v0.5.4 © 2023 与 New API v0.2.4.0-alpha.2 © 2023
                 JustSong。本项目根据MIT许可证授权。
               </p>
             </Layout.Content>
