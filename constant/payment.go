@@ -4,5 +4,5 @@ var PayAddress = ""
 var CustomCallbackAddress = ""
 var EpayId = ""
 var EpayKey = ""
-var Price = 7.2
+var Price = 7.3
 var MinTopUp = 1
