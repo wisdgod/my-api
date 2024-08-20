@@ -39,13 +39,16 @@ const About = () => {
             </Layout.Header>
             <Layout.Content>
               <p>可在设置页面设置关于内容，支持 HTML & Markdown</p>
-              my-api项目仓库地址：
+              My-API项目仓库地址：
               <a href='https://github.com/wisdgod/my-api'>
                 https://github.com/wisdgod/my-api
               </a>
               <p>
-                My API © 2024 wisdgod | 基于 One API v0.5.4 © 2023 与 New API v0.2.4.0-alpha.4 © 2023
-                JustSong。本项目根据MIT许可证授权。
+                MyAPI © 2023 CalciumIon | 基于 One API v0.5.4 © 2023
+                JustSong。
+              </p>
+              <p>
+                本项目根据MIT许可证授权，需在遵守Apache-2.0协议的前提下使用。
               </p>
             </Layout.Content>
           </Layout>

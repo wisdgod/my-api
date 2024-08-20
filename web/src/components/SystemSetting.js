@@ -31,7 +31,7 @@ const SystemSetting = () => {
     WorkerValidKey: '',
     EpayId: '',
     EpayKey: '',
-    Price: 7.2,
+    Price: 7.3,
     MinTopUp: 1,
     TopupGroupRatio: '',
     PayAddress: '',

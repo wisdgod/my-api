@@ -38,11 +38,7 @@ const Footer = () => {
         target='_blank'
         rel='noreferrer'
       >
-        One API v0.5.4
-      </a>{' '}
-      与{' '}
-      <a href="https://github.com/Calcium-Ion/new-api" target="_blank" rel="noreferrer">
-        New API v0.2.4.0-alpha.4
+        One API
       </a>
     </div>
   );
