@@ -121,6 +121,9 @@ func shouldRetry(c *gin.Context, openaiErr *dto.OpenAIErrorWithStatusCode, retry
 	if openaiErr == nil {
 		return false
 	}
+	if openaiErr.LocalError {
+		return false
+	}
 	if retryTimes <= 0 {
 		return false
 	}
@@ -149,9 +152,6 @@ func shouldRetry(c *gin.Context, openaiErr *dto.OpenAIErrorWithStatusCode, retry
 	}
 	if openaiErr.StatusCode == 408 {
 		// azure处理超时不重试
-		return false
-	}
-	if openaiErr.LocalError {
 		return false
 	}
 	if openaiErr.StatusCode/100 == 2 {
@@ -205,7 +205,7 @@ func RelayMidjourney(c *gin.Context) {
 func RelayNotImplemented(c *gin.Context) {
 	err := dto.OpenAIError{
 		Message: "API not implemented",
-		Type:    "new_api_error",
+		Type:    "my_api_error",
 		Param:   "",
 		Code:    "api_not_implemented",
 	}

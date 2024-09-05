@@ -18,7 +18,7 @@ const Footer = () => {
   const defaultFooter = (
     <div className='custom-footer'>
       <a
-        href='https://github.com/wisdgod/my-api'
+        href='https://github.com/Calcium-Ion/new-api'
         target='_blank'
         rel='noreferrer'
       >
@@ -26,11 +26,11 @@ const Footer = () => {
       </a>
       由{' '}
       <a
-        href='https://github.com/wisdgod'
+        href='https://github.com/Calcium-Ion'
         target='_blank'
         rel='noreferrer'
       >
-        wisdgod
+        Calcium-Ion
       </a>{' '}
       开发，基于{' '}
       <a
