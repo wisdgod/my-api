@@ -31,7 +31,7 @@ const SystemSetting = () => {
     WorkerValidKey: '',
     EpayId: '',
     EpayKey: '',
-    Price: 7.3,
+    Price: 7.2,
     MinTopUp: 1,
     TopupGroupRatio: '',
     PayAddress: '',
@@ -340,7 +340,7 @@ const SystemSetting = () => {
             更新服务器地址
           </Form.Button>
           <Header as='h3' inverted={isDark}>
-            代理设置（支持 <a href='https://github.com/wisdgod/my-api-worker' target='_blank' rel='noreferrer'>my-api-worker</a>）
+            代理设置（支持 <a href='https://github.com/Calcium-Ion/new-api-worker' target='_blank' rel='noreferrer'>new-api-worker</a>）
           </Header>
           <Form.Group widths='equal'>
             <Form.Input

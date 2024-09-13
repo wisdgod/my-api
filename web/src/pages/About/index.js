@@ -44,8 +44,8 @@ const About = () => {
                 https://github.com/wisdgod/my-api
               </a>
               <p>
-                MyAPI © 2023 CalciumIon | 基于 One API v0.5.4 © 2023
-                JustSong。
+                My API © 2024 wisdgod | 基于 One API v0.5.4 © 2023
+                JustSong 与 New API © 2023 CalciumIon。
               </p>
               <p>
                 本项目根据MIT许可证授权，需在遵守Apache-2.0协议的前提下使用。

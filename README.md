@@ -2,7 +2,7 @@
 # My API
 
 > [!NOTE]
-> 本项目为开源项目，在[One API](https://github.com/songquanpeng/one-api)的基础上进行二次开发
+> 本项目为开源项目，在 [One API](https://github.com/songquanpeng/one-api) 和 [New API](https://github.com/Calcium-Ion/new-api) 的基础上进行二次开发
 
 > [!IMPORTANT]
 > 使用者必须在遵循 OpenAI 的[使用条款](https://openai.com/policies/terms-of-use)以及**法律法规**的情况下使用，不得用于非法用途。
@@ -10,7 +10,7 @@
 > 根据[《生成式人工智能服务管理暂行办法》](http://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)的要求，请勿对中国地区公众提供一切未经备案的生成式人工智能服务。
 
 > [!TIP]
-> 最新版Docker镜像：`wisdgod/my-api:latest`  
+> 最新版Docker镜像：`calciumion/new-api:latest`  
 > 默认账号root 密码123456  
 > 更新指令：
 > ```
@@ -74,19 +74,19 @@
 ### 基于 Docker 进行部署
 ```shell
 # 使用 SQLite 的部署命令：
-docker run --name my-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /home/ubuntu/data/my-api:/data wisdgod/my-api:latest
+docker run --name new-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /home/ubuntu/data/new-api:/data calciumion/new-api:latest
 # 使用 MySQL 的部署命令，在上面的基础上添加 `-e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi"`，请自行修改数据库连接参数。
 # 例如：
-docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" -e TZ=Asia/Shanghai -v /home/ubuntu/data/my-api:/data wisdgod/my-api:latest
+docker run --name new-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" -e TZ=Asia/Shanghai -v /home/ubuntu/data/new-api:/data calciumion/new-api:latest
 ```
 ### 使用宝塔面板Docker功能部署
 ```shell
 # 使用 SQLite 的部署命令：
-docker run --name my-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /www/wwwroot/my-api:/data wisdgod/my-api:latest
+docker run --name new-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /www/wwwroot/new-api:/data calciumion/new-api:latest
 # 使用 MySQL 的部署命令，在上面的基础上添加 `-e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi"`，请自行修改数据库连接参数。
 # 例如：
 # 注意：数据库要开启远程访问，并且只允许服务器IP访问
-docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(宝塔的服务器地址:宝塔数据库端口)/宝塔数据库名称" -e TZ=Asia/Shanghai -v /www/wwwroot/my-api:/data wisdgod/my-api:latest
+docker run --name new-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(宝塔的服务器地址:宝塔数据库端口)/宝塔数据库名称" -e TZ=Asia/Shanghai -v /www/wwwroot/new-api:/data calciumion/new-api:latest
 # 注意：数据库要开启远程访问，并且只允许服务器IP访问
 ```
 
@@ -116,22 +116,22 @@ docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:12345
 [对接文档](Suno.md)
 
 ## 交流群
-<img src="https://github.com/wisdgod/my-api/assets/61247483/de536a8a-0161-47a7-a0a2-66ef6de81266" width="300">
+<img src="https://github.com/Calcium-Ion/new-api/assets/61247483/de536a8a-0161-47a7-a0a2-66ef6de81266" width="300">
 
 ## 界面截图
-![image](https://github.com/wisdgod/my-api/assets/61247483/ad0e7aae-0203-471c-9716-2d83768927d4)
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/ad0e7aae-0203-471c-9716-2d83768927d4)
 
-![image](https://github.com/wisdgod/my-api/assets/61247483/d1ac216e-0804-4105-9fdc-66b35022d861)
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/d1ac216e-0804-4105-9fdc-66b35022d861)
 
-![image](https://github.com/wisdgod/my-api/assets/61247483/3ca0b282-00ff-4c96-bf9d-e29ef615c605)  
-![image](https://github.com/wisdgod/my-api/assets/61247483/f4f40ed4-8ccb-43d7-a580-90677827646d)  
-![image](https://github.com/wisdgod/my-api/assets/61247483/90d7d763-6a77-4b36-9f76-2bb30f18583d)
-![image](https://github.com/wisdgod/my-api/assets/61247483/e414228a-3c35-429a-b298-6451d76d9032)
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/3ca0b282-00ff-4c96-bf9d-e29ef615c605)  
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/f4f40ed4-8ccb-43d7-a580-90677827646d)  
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/90d7d763-6a77-4b36-9f76-2bb30f18583d)
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/e414228a-3c35-429a-b298-6451d76d9032)
 夜间模式  
-![image](https://github.com/wisdgod/my-api/assets/61247483/1c66b593-bb9e-4757-9720-ff2759539242)
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/1c66b593-bb9e-4757-9720-ff2759539242)
 
-![image](https://github.com/wisdgod/my-api/assets/61247483/5b3228e8-2556-44f7-97d6-4f8d8ee6effa)  
-![image](https://github.com/wisdgod/my-api/assets/61247483/af9a07ee-5101-4b3d-8bd9-ae21a4fd7e9e)
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/5b3228e8-2556-44f7-97d6-4f8d8ee6effa)  
+![image](https://github.com/Calcium-Ion/new-api/assets/61247483/af9a07ee-5101-4b3d-8bd9-ae21a4fd7e9e)
 
 ## 相关项目
 - [One API](https://github.com/songquanpeng/one-api)：原版项目
@@ -141,4 +141,4 @@ docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:12345
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wisdgod/my-api&type=Date)](https://star-history.com/#wisdgod/my-api&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Calcium-Ion/new-api&type=Date)](https://star-history.com/#Calcium-Ion/new-api&Date)

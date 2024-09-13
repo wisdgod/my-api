@@ -30,7 +30,7 @@ var indexPage []byte
 
 func main() {
 	common.SetupLogger()
-	common.SysLog("My API " + common.Version + " started")
+	common.SysLog("New API " + common.Version + " started")
 	if os.Getenv("GIN_MODE") != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}

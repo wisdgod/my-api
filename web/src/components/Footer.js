@@ -30,7 +30,7 @@ const Footer = () => {
         target='_blank'
         rel='noreferrer'
       >
-        Calcium-Ion
+        wisdgod
       </a>{' '}
       开发，基于{' '}
       <a
@@ -39,6 +39,14 @@ const Footer = () => {
         rel='noreferrer'
       >
         One API
+      </a>{' '}
+      与{' '}
+      <a
+        href='https://github.com/Calcium-Ion/new-api'
+        target='_blank'
+        rel='noreferrer'
+      >
+        New API
       </a>
     </div>
   );
