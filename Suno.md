@@ -37,8 +37,8 @@
 3. **代理**填写 Suno API 部署的地址，例如：http://localhost:8080
 4. 密钥填写 Suno API 的密钥，如果没有设置密钥，可以随便填
 
-### 对接上游new api
+### 对接上游my api
 
 1. 在渠道管理中添加渠道，渠道类型选择**Suno API**，或任意类型，只需模型包含上方模型列表的模型
-2. **代理**填写上游new api的地址，例如：http://localhost:3000
-3. 密钥填写上游new api的密钥
+2. **代理**填写上游my api的地址，例如：http://localhost:3000
+3. 密钥填写上游my api的密钥

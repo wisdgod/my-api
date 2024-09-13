@@ -18,7 +18,7 @@ const Footer = () => {
   const defaultFooter = (
     <div className='custom-footer'>
       <a
-        href='https://github.com/Calcium-Ion/new-api'
+        href='https://github.com/wisdgod/my-api'
         target='_blank'
         rel='noreferrer'
       >
@@ -59,12 +59,10 @@ const Footer = () => {
     <Layout>
       <Layout.Content style={{ textAlign: 'center' }}>
         {footer ? (
-          <Tooltip content={defaultFooter}>
-            <div
-              className='custom-footer'
-              dangerouslySetInnerHTML={{ __html: footer }}
-            ></div>
-          </Tooltip>
+          <div
+            className='custom-footer'
+            dangerouslySetInnerHTML={{ __html: footer }}
+          ></div>
         ) : (
           defaultFooter
         )}

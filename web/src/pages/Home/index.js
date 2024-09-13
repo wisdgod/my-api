@@ -86,11 +86,11 @@ const Home = () => {
                   <p>
                     源码：
                     <a
-                      href='https://github.com/Calcium-Ion/new-api'
+                      href='https://github.com/wisdgod/my-api'
                       target='_blank'
                       rel='noreferrer'
                     >
-                      https://github.com/Calcium-Ion/new-api
+                      https://github.com/wisdgod/my-api
                     </a>
                   </p>
                   <p>
