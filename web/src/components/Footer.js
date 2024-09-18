@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { getFooterHTML, getSystemName } from '../helpers';
 import { Layout, Tooltip } from '@douyinfe/semi-ui';
 
-const Footer = () => {
+const FooterBar = () => {
   const systemName = getSystemName();
   const [footer, setFooter] = useState(getFooterHTML());
   let remainCheckTimes = 5;
@@ -39,7 +39,7 @@ const Footer = () => {
         rel='noreferrer'
       >
         One API
-      </a>{' '}
+        </a>{' '}
       与{' '}
       <a
         href='https://github.com/Calcium-Ion/new-api'
@@ -64,19 +64,17 @@ const Footer = () => {
   }, []);
 
   return (
-    <Layout>
-      <Layout.Content style={{ textAlign: 'center' }}>
-        {footer ? (
-          <div
-            className='custom-footer'
-            dangerouslySetInnerHTML={{ __html: footer }}
-          ></div>
-        ) : (
-          defaultFooter
-        )}
-      </Layout.Content>
-    </Layout>
+    <div style={{ textAlign: 'center' }}>
+      {footer ? (
+        <div
+          className='custom-footer'
+          dangerouslySetInnerHTML={{ __html: footer }}
+        ></div>
+      ) : (
+        defaultFooter
+      )}
+    </div>
   );
 };
 
-export default Footer;
+export default FooterBar;
