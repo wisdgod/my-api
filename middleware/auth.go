@@ -1,13 +1,14 @@
 package middleware
 
 import (
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"one-api/common"
 	"one-api/model"
 	"strconv"
 	"strings"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 func validUserInfo(username string, role int) bool {
@@ -121,6 +122,8 @@ func authHelper(c *gin.Context, minRole int) {
 	c.Set("username", username)
 	c.Set("role", role)
 	c.Set("id", id)
+	c.Set("group", session.Get("group"))
+	c.Set("use_access_token", useAccessToken)
 	c.Next()
 }
 

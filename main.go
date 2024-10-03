@@ -3,10 +3,6 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/bytedance/gopkg/util/gopool"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"one-api/common"
@@ -18,6 +14,11 @@ import (
 	"one-api/service"
 	"os"
 	"strconv"
+
+	"github.com/bytedance/gopkg/util/gopool"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 
 	_ "net/http/pprof"
 )
@@ -128,8 +129,8 @@ func main() {
 		common.SysError(fmt.Sprintf("panic detected: %v", err))
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": gin.H{
-				"message": fmt.Sprintf("Panic detected, error: %v. Please submit a issue here: https://github.com/Calcium-Ion/new-api", err),
-				"type":    "new_api_panic",
+				"message": fmt.Sprintf("Panic detected, error: %v. Please submit a issue here: https://github.com/wisdgod/my-api", err),
+				"type":    "my_api_panic",
 			},
 		})
 	}))

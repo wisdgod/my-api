@@ -12,7 +12,7 @@ import { API, removeTrailingSlash, showError, verifyJSON } from '../helpers';
 
 import { useTheme } from '../context/Theme';
 
-const SystemSetting = () => {
+const SafetySetting = () => {
   let [inputs, setInputs] = useState({
     PasswordLoginEnabled: '',
     PasswordRegisterEnabled: '',

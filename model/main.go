@@ -1,16 +1,17 @@
 package model
 
 import (
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 	"log"
 	"one-api/common"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -32,7 +33,7 @@ func createRootAccountIfNeed() error {
 			Role:        common.RoleRootUser,
 			Status:      common.UserStatusEnabled,
 			DisplayName: "Root User",
-			AccessToken: common.GetUUID(),
+			AccessToken: nil,
 			Quota:       100000000,
 		}
 		DB.Create(&rootUser)
