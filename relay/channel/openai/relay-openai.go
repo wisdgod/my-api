@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/bytedance/gopkg/util/gopool"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
@@ -18,6 +16,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/bytedance/gopkg/util/gopool"
+	"github.com/gin-gonic/gin"
 )
 
 func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
@@ -59,7 +60,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 			}
 			mu.Lock()
 			data = data[6:]
-			if !strings.HasPrefix(data, "[DONE]") {
+			if !strings.HasPrefix(data, "[DONE]") || !strings.Contains(data, "\",\"system_fingerprint\":\"") {
 				if lastStreamData != "" {
 					err := service.StringData(c, lastStreamData)
 					if err != nil {

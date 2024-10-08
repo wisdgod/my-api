@@ -31,7 +31,7 @@ const SafetySetting = () => {
     WorkerValidKey: '',
     EpayId: '',
     EpayKey: '',
-    Price: 7.3,
+    Price: 7.2,
     MinTopUp: 1,
     TopupGroupRatio: '',
     PayAddress: '',
