@@ -217,10 +217,8 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 	}
 	// 从上下文中获取 response_mapping 字符串
 	responseMappingStr := c.GetString("response_mapping")
-
 	// 初始化一个 mapping 用于存储替换规则
 	var responseMapping map[string]string
-
 	// 检查 responseMappingStr 是否为空
 	if strings.TrimSpace(responseMappingStr) != "" {
 		// 尝试解析 JSON 字符串
@@ -230,7 +228,6 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 			responseMapping = nil
 		}
 	}
-
 	// 如果有有效的替换规则，进行内容替换
 	if responseMapping != nil {
 		for i, choice := range simpleResponse.Choices {
