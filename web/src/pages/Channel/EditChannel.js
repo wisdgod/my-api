@@ -37,6 +37,10 @@ const STATUS_CODE_MAPPING_EXAMPLE = {
   400: '500',
 };
 
+const RESPONSE_MAPPING_EXAMPLE = {
+  'pattern': 'replacement',
+};
+
 const REGION_EXAMPLE = {
   "default": "us-central1",
   "claude-3-5-sonnet-20240620": "europe-west1"
@@ -80,6 +84,7 @@ const EditChannel = (props) => {
     other: '',
     model_mapping: '',
     status_code_mapping: '',
+    response_mapping: '',
     models: [],
     auto_ban: 1,
     test_model: '',
@@ -936,6 +941,33 @@ const EditChannel = (props) => {
                 'status_code_mapping',
                 JSON.stringify(STATUS_CODE_MAPPING_EXAMPLE, null, 2),
               );
+            }}
+          >
+            填入模板
+          </Typography.Text>
+          <div style={{ marginTop: 10 }}>
+            <Typography.Text strong>
+              非流响应内容替换（正则表达式）：
+            </Typography.Text>
+          </div>
+          <TextArea
+            placeholder={`请输入 JSON 格式的替换规则，例如：\n{\n  "pattern": "replacement"\n}`}
+            name='response_mapping'
+            onChange={(value) => {
+              handleInputChange('response_mapping', value);
+            }}
+            autosize
+            value={inputs.response_mapping}
+            autoComplete='new-password'
+          />
+          <Typography.Text
+            style={{
+              color: 'rgba(var(--semi-blue-5), 1)',
+              userSelect: 'none',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              handleInputChange('response_mapping', JSON.stringify(RESPONSE_MAPPING_EXAMPLE, null, 2));
             }}
           >
             填入模板

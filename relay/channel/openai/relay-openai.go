@@ -13,6 +13,7 @@ import (
 	relaycommon "one-api/relay/common"
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -214,8 +215,49 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 			StatusCode: resp.StatusCode,
 		}, nil
 	}
+	// 从上下文中获取 response_mapping 字符串
+	responseMappingStr := c.GetString("response_mapping")
+
+	// 初始化一个 mapping 用于存储替换规则
+	var responseMapping map[string]string
+
+	// 检查 responseMappingStr 是否为空
+	if strings.TrimSpace(responseMappingStr) != "" {
+		// 尝试解析 JSON 字符串
+		err := json.Unmarshal([]byte(responseMappingStr), &responseMapping)
+		if err != nil {
+			// 如果解析失败，不进行替换操作，避免程序崩溃
+			responseMapping = nil
+		}
+	}
+
+	// 如果有有效的替换规则，进行内容替换
+	if responseMapping != nil {
+		for i, choice := range simpleResponse.Choices {
+			content := string(choice.Message.Content)
+			// 遍历替换规则，进行逐一替换
+			for pattern, replacement := range responseMapping {
+				re := regexp.MustCompile(pattern)
+				content = re.ReplaceAllString(content, replacement)
+			}
+			// 更新替换后的内容
+			simpleResponse.Choices[i].Message.Content = json.RawMessage(content)
+		}
+		// 重新序列化响应内容
+		filteredResponseBody, err := json.Marshal(simpleResponse)
+		if err == nil {
+			// 重置 response body
+			resp.Body = io.NopCloser(bytes.NewBuffer(filteredResponseBody))
+		} else {
+			// 如果序列化失败，保持原始响应内容
+			resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+		}
+	} else {
+		// 如果没有有效的替换规则，保持原始响应内容
+		resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+	}
 	// Reset response body
-	resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+	// resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
 	// We shouldn't set the header before we parse the response body, because the parse part may fail.
 	// And then we will have to send an error response, but in this case, the header has already been set.
 	// So the httpClient will be confused by the response.

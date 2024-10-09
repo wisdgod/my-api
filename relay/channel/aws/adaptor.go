@@ -2,13 +2,13 @@ package aws
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
 	"one-api/relay/channel/claude"
 	relaycommon "one-api/relay/common"
-	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -31,11 +31,7 @@ func (a *Adaptor) ConvertImageRequest(c *gin.Context, info *relaycommon.RelayInf
 }
 
 func (a *Adaptor) Init(info *relaycommon.RelayInfo) {
-	if strings.HasPrefix(info.UpstreamModelName, "claude-3") {
-		a.RequestMode = RequestModeMessage
-	} else {
-		a.RequestMode = RequestModeCompletion
-	}
+	a.RequestMode = RequestModeMessage
 }
 
 func (a *Adaptor) GetRequestURL(info *relaycommon.RelayInfo) (string, error) {
@@ -53,11 +49,7 @@ func (a *Adaptor) ConvertRequest(c *gin.Context, info *relaycommon.RelayInfo, re
 
 	var claudeReq *claude.ClaudeRequest
 	var err error
-	if a.RequestMode == RequestModeCompletion {
-		claudeReq = claude.RequestOpenAI2ClaudeComplete(*request)
-	} else {
-		claudeReq, err = claude.RequestOpenAI2ClaudeMessage(*request)
-	}
+	claudeReq, err = claude.RequestOpenAI2ClaudeMessage(*request)
 	c.Set("request_model", request.Model)
 	c.Set("converted_request", claudeReq)
 	return claudeReq, err

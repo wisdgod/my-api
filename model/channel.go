@@ -2,9 +2,10 @@ package model
 
 import (
 	"encoding/json"
-	"gorm.io/gorm"
 	"one-api/common"
 	"strings"
+
+	"gorm.io/gorm"
 )
 
 type Channel struct {
@@ -29,6 +30,7 @@ type Channel struct {
 	ModelMapping       *string `json:"model_mapping" gorm:"type:varchar(1024);default:''"`
 	//MaxInputTokens     *int    `json:"max_input_tokens" gorm:"default:0"`
 	StatusCodeMapping *string `json:"status_code_mapping" gorm:"type:varchar(1024);default:''"`
+	ResponseMapping   *string `json:"response_mapping" gorm:"type:varchar(1024);default:''"`
 	Priority          *int64  `json:"priority" gorm:"bigint;default:0"`
 	AutoBan           *int    `json:"auto_ban" gorm:"default:1"`
 	OtherInfo         string  `json:"other_info"`
@@ -208,6 +210,13 @@ func (channel *Channel) GetStatusCodeMapping() string {
 		return ""
 	}
 	return *channel.StatusCodeMapping
+}
+
+func (channel *Channel) GetResponseMapping() string {
+	if channel.ResponseMapping == nil {
+		return ""
+	}
+	return *channel.ResponseMapping
 }
 
 func (channel *Channel) Insert() error {
