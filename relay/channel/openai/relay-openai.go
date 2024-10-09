@@ -234,7 +234,11 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 			content := string(choice.Message.Content)
 			// 遍历替换规则，进行逐一替换
 			for pattern, replacement := range responseMapping {
-				re := regexp.MustCompile(pattern)
+				re, err := regexp.Compile(pattern)
+				if err != nil {
+					// 正则表达式编译失败，跳过该规则
+					continue
+				}
 				content = re.ReplaceAllString(content, replacement)
 			}
 			// 更新替换后的内容
