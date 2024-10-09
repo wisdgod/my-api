@@ -942,7 +942,7 @@ const ChannelsTable = () => {
             position={'top'}
           >
             <Button theme='light' type='danger' style={{ marginRight: 8 }}>
-              修复数据库一致性
+              清空正则编译缓存
             </Button>
           </Popconfirm>
         </Space>
