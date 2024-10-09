@@ -34,6 +34,9 @@ var SessionSecret = uuid.New().String()
 var OptionMap map[string]string
 var OptionMapRWMutex sync.RWMutex
 
+// 定义一个全局的缓存，用于存储编译后的正则表达式
+var RegexCache = sync.Map{}
+
 var ItemsPerPage = 10
 var MaxRecentItems = 100
 

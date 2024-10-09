@@ -234,10 +234,19 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 			content := string(choice.Message.Content)
 			// 遍历替换规则，进行逐一替换
 			for pattern, replacement := range responseMapping {
-				re, err := regexp.Compile(pattern)
-				if err != nil {
-					// 正则表达式编译失败，跳过该规则
-					continue
+				// 尝试从缓存中获取已编译的正则表达式
+				var re *regexp.Regexp
+				if cachedRe, ok := common.RegexCache.Load(pattern); ok {
+					re = cachedRe.(*regexp.Regexp)
+				} else {
+					// 编译新的正则表达式并存入缓存
+					var err error
+					re, err = regexp.Compile(pattern)
+					if err != nil {
+						// 编译失败，跳过该规则
+						continue
+					}
+					common.RegexCache.Store(pattern, re)
 				}
 				content = re.ReplaceAllString(content, replacement)
 			}
