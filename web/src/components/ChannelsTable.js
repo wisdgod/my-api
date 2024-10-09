@@ -647,6 +647,16 @@ const ChannelsTable = () => {
     }
   };
 
+  const clearRegexCache = async () => {
+    const res = await API.post(`/api/channel/clear_regex_cache`);
+    const { success, message, data } = res.data;
+    if (success) {
+      showSuccess(`已清除 ${data} 条缓存！`);
+    } else {
+      showError(message);
+    }
+  };
+
   let pageData = channels.slice(
     (activePage - 1) * pageSize,
     activePage * pageSize,
@@ -921,6 +931,17 @@ const ChannelsTable = () => {
             position={'top'}
           >
             <Button theme='light' type='secondary' style={{ marginRight: 8 }}>
+              修复数据库一致性
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            title='确定是否要清空正则表达式编译缓存？'
+            content='此修改可能导致非流请求变慢'
+            okType={'danger'}
+            onConfirm={clearRegexCache}
+            position={'top'}
+          >
+            <Button theme='light' type='danger' style={{ marginRight: 8 }}>
               修复数据库一致性
             </Button>
           </Popconfirm>

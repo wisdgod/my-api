@@ -3,12 +3,13 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"one-api/common"
 	"one-api/model"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type OpenAIModel struct {
@@ -354,4 +355,28 @@ func UpdateChannel(c *gin.Context) {
 		"data":    channel,
 	})
 	return
+}
+
+func ClearRegexCache(c *gin.Context) {
+	var count int
+	// 遍历 RegexCache，统计条数并删除每个键
+	common.RegexCache.Range(func(key, value interface{}) bool {
+		count++
+		common.RegexCache.Delete(key)
+		return true
+	})
+
+	if count == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"success": false,
+			"message": "无缓存，不需要清除！",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "",
+		"data":    count,
+	})
 }
