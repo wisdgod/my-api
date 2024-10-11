@@ -937,11 +937,11 @@ const ChannelsTable = () => {
           <Popconfirm
             title='确定是否要清空正则表达式编译缓存？'
             content='此修改可能导致非流请求变慢'
-            okType={'danger'}
+            okType={'warning'}
             onConfirm={clearRegexCache}
             position={'top'}
           >
-            <Button theme='light' type='danger' style={{ marginRight: 8 }}>
+            <Button theme='light' type='warning' style={{ marginRight: 8 }}>
               清空正则编译缓存
             </Button>
           </Popconfirm>
