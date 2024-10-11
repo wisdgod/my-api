@@ -196,7 +196,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 }
 
 func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model string) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
-	var simpleResponse dto.SimpleResponse
+	// 读取响应体
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return service.OpenAIErrorWrapper(err, "read_response_body_failed", http.StatusInternalServerError), nil
@@ -205,16 +205,20 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 	if err != nil {
 		return service.OpenAIErrorWrapper(err, "close_response_body_failed", http.StatusInternalServerError), nil
 	}
-	err = json.Unmarshal(responseBody, &simpleResponse)
-	if err != nil {
-		return service.OpenAIErrorWrapper(err, "unmarshal_response_body_failed", http.StatusInternalServerError), nil
-	}
-	if simpleResponse.Error.Type != "" {
+
+	// 重置响应体
+	resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+
+	// 检查是否有错误信息
+	var openAIError dto.OpenAIError
+	err = json.Unmarshal(responseBody, &openAIError)
+	if err == nil && openAIError.Type != "" {
 		return &dto.OpenAIErrorWithStatusCode{
-			Error:      simpleResponse.Error,
+			Error:      openAIError,
 			StatusCode: resp.StatusCode,
 		}, nil
 	}
+
 	// 从上下文中获取 response_mapping 字符串
 	responseMappingStr := c.GetString("response_mapping")
 	// 初始化一个 mapping 用于存储替换规则
@@ -228,50 +232,66 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 			responseMapping = nil
 		}
 	}
+
 	// 如果有有效的替换规则，进行内容替换
 	if responseMapping != nil {
-		for i, choice := range simpleResponse.Choices {
-			content := string(choice.Message.Content)
-			// 遍历替换规则，进行逐一替换
-			for pattern, replacement := range responseMapping {
-				// 尝试从缓存中获取已编译的正则表达式
-				var re *regexp.Regexp
-				if cachedRe, ok := common.RegexCache.Load(pattern); ok {
-					re = cachedRe.(*regexp.Regexp)
-				} else {
-					// 编译新的正则表达式并存入缓存
-					var err error
-					re, err = regexp.Compile(pattern)
-					if err != nil {
-						// 编译失败，跳过该规则
-						continue
-					}
-					common.RegexCache.Store(pattern, re)
-				}
-				content = re.ReplaceAllString(content, replacement)
-			}
-			// 更新替换后的内容
-			simpleResponse.Choices[i].Message.Content = json.RawMessage(content)
-		}
-		// 重新序列化响应内容
-		filteredResponseBody, err := json.Marshal(simpleResponse)
+		// 使用通用的 map 来解析响应，避免信息丢失
+		var responseMap map[string]interface{}
+		err := json.Unmarshal(responseBody, &responseMap)
 		if err == nil {
-			// 重置 response body
-			resp.Body = io.NopCloser(bytes.NewBuffer(filteredResponseBody))
+			// 处理 choices 中的内容
+			if choices, ok := responseMap["choices"].([]interface{}); ok {
+				for _, choice := range choices {
+					if choiceMap, ok := choice.(map[string]interface{}); ok {
+						// 处理 message.content
+						if message, ok := choiceMap["message"].(map[string]interface{}); ok {
+							if content, ok := message["content"].(string); ok {
+								// 遍历替换规则，进行逐一替换
+								for pattern, replacement := range responseMapping {
+									// 尝试从缓存中获取已编译的正则表达式
+									var re *regexp.Regexp
+									if cachedRe, ok := common.RegexCache.Load(pattern); ok {
+										re = cachedRe.(*regexp.Regexp)
+									} else {
+										// 编译新的正则表达式并存入缓存
+										var err error
+										re, err = regexp.Compile(pattern)
+										if err != nil {
+											// 编译失败，跳过该规则
+											continue
+										}
+										common.RegexCache.Store(pattern, re)
+									}
+									content = re.ReplaceAllString(content, replacement)
+								}
+								// 更新替换后的内容
+								message["content"] = content
+							}
+						}
+					}
+				}
+			}
+			// 重新序列化响应内容
+			filteredResponseBody, err := json.Marshal(responseMap)
+			if err == nil {
+				// 重置 response body
+				resp.Body = io.NopCloser(bytes.NewBuffer(filteredResponseBody))
+			} else {
+				// 如果序列化失败，保持原始响应内容
+				resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+			}
 		} else {
-			// 如果序列化失败，保持原始响应内容
+			// 如果解析失败，保持原始响应内容
 			resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
 		}
 	} else {
 		// 如果没有有效的替换规则，保持原始响应内容
 		resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
 	}
-	// Reset response body
-	// resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
-	// We shouldn't set the header before we parse the response body, because the parse part may fail.
-	// And then we will have to send an error response, but in this case, the header has already been set.
-	// So the httpClient will be confused by the response.
-	// For example, Postman will report error, and we cannot check the response at all.
+
+	// 我们不应该在解析响应体之前设置响应头，因为解析部分可能失败，
+	// 这样我们将不得不发送错误响应，但此时，响应头已经设置，
+	// 这会让 httpClient 感到困惑，例如 Postman 会报告错误，我们无法查看响应内容。
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
 	}
@@ -281,19 +301,44 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 		return service.OpenAIErrorWrapper(err, "copy_response_body_failed", http.StatusInternalServerError), nil
 	}
 	resp.Body.Close()
-	if simpleResponse.Usage.TotalTokens == 0 || (simpleResponse.Usage.PromptTokens == 0 && simpleResponse.Usage.CompletionTokens == 0) {
-		completionTokens := 0
-		for _, choice := range simpleResponse.Choices {
-			ctkm, _ := service.CountTokenText(string(choice.Message.Content), model)
-			completionTokens += ctkm
+
+	// 解析 usage 信息
+	var usage dto.Usage
+	var responseMap map[string]interface{}
+	err = json.Unmarshal(responseBody, &responseMap)
+	if err == nil {
+		if usageMap, ok := responseMap["usage"].(map[string]interface{}); ok {
+			usage.PromptTokens = int(usageMap["prompt_tokens"].(float64))
+			usage.CompletionTokens = int(usageMap["completion_tokens"].(float64))
+			usage.TotalTokens = int(usageMap["total_tokens"].(float64))
+		} else {
+			// 如果没有 usage 信息，手动计算 completionTokens
+			usage.PromptTokens = promptTokens
+			usage.CompletionTokens = 0
+			if choices, ok := responseMap["choices"].([]interface{}); ok {
+				for _, choice := range choices {
+					if choiceMap, ok := choice.(map[string]interface{}); ok {
+						// 处理 message.content
+						if message, ok := choiceMap["message"].(map[string]interface{}); ok {
+							if content, ok := message["content"].(string); ok {
+								ctkm, _ := service.CountTokenText(content, model)
+								usage.CompletionTokens += ctkm
+							}
+						}
+					}
+				}
+			}
+			usage.TotalTokens = usage.PromptTokens + usage.CompletionTokens
 		}
-		simpleResponse.Usage = dto.Usage{
-			PromptTokens:     promptTokens,
-			CompletionTokens: completionTokens,
-			TotalTokens:      promptTokens + completionTokens,
+	} else {
+		// 如果解析失败，仍然返回初始的 usage
+		usage = dto.Usage{
+			PromptTokens: promptTokens,
+			TotalTokens:  promptTokens,
 		}
 	}
-	return nil, &simpleResponse.Usage
+
+	return nil, &usage
 }
 
 func OpenaiTTSHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
