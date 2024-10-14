@@ -1,9 +1,11 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"one-api/common"
+	"one-api/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetGroups(c *gin.Context) {
@@ -20,10 +22,14 @@ func GetGroups(c *gin.Context) {
 
 func GetUserGroups(c *gin.Context) {
 	usableGroups := make(map[string]string)
+	userGroup := ""
+	userId := c.GetInt("id")
+	userGroup, _ = model.CacheGetUserGroup(userId)
 	for groupName, _ := range common.GroupRatio {
 		// UserUsableGroups contains the groups that the user can use
-		if _, ok := common.UserUsableGroups[groupName]; ok {
-			usableGroups[groupName] = common.UserUsableGroups[groupName]
+		userUsableGroups := common.GetUserUsableGroups(userGroup)
+		if _, ok := userUsableGroups[groupName]; ok {
+			usableGroups[groupName] = userUsableGroups[groupName]
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
