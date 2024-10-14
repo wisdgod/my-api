@@ -5,7 +5,7 @@ permissions:
 on:
   push:
     tags:
-      - '*'
+      - '!*'
       - '!*-alpha*'
 
 jobs:
@@ -63,7 +63,9 @@ jobs:
         uses: softprops/action-gh-release@v2.0.8
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: one-api*
+          files: |
+            one-api
+            one-api-arm64
           draft: true
           generate_release_notes: true
         env:
