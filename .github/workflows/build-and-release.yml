@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4.4.3
         with:
           name: frontend-build
-          path: web/build
+          path: web/dist
 
   backend_build_and_publish:
     needs: frontend_build
@@ -87,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v4.1.8
         with:
           name: frontend-build
-          path: web/build
+          path: web/dist
 
       - name: 设置 Go 环境
         uses: actions/setup-go@v5.0.2
