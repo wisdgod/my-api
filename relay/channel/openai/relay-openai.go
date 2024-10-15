@@ -280,9 +280,11 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 					}
 				}
 			}
-			// 重新序列化响应内容
+			// 在重新序列化响应内容后，添加换行符
 			filteredResponseBody, err := json.Marshal(responseMap)
 			if err == nil {
+				// 添加换行符
+				filteredResponseBody = append(filteredResponseBody, '\n')
 				// 重置 response body
 				resp.Body = io.NopCloser(bytes.NewBuffer(filteredResponseBody))
 				// 如果内容被修改，更新 responseBody 变量
