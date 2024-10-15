@@ -1,4 +1,4 @@
-name: 构建发布
+name: build-and-release
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
           cd ..
 
       - name: 上传前端构建产物
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: frontend-build
           path: web/build
@@ -84,13 +84,13 @@ jobs:
           fetch-depth: 0
 
       - name: 下载前端构建产物
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.8
         with:
           name: frontend-build
           path: web/build
 
       - name: 设置 Go 环境
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5.0.2
         with:
           go-version: '>=1.18.0'
 
