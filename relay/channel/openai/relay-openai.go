@@ -14,6 +14,7 @@ import (
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -233,6 +234,9 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 		}
 	}
 
+	// 标记是否进行了替换操作
+	bodyModified := false
+
 	// 如果有有效的替换规则，进行内容替换
 	if responseMapping != nil {
 		// 使用通用的 map 来解析响应，避免信息丢失
@@ -246,6 +250,7 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 						// 处理 message.content
 						if message, ok := choiceMap["message"].(map[string]interface{}); ok {
 							if content, ok := message["content"].(string); ok {
+								originalContent := content
 								// 遍历替换规则，进行逐一替换
 								for pattern, replacement := range responseMapping {
 									// 尝试从缓存中获取已编译的正则表达式
@@ -264,6 +269,10 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 									}
 									content = re.ReplaceAllString(content, replacement)
 								}
+								// 如果内容发生了变化，标记为已修改
+								if content != originalContent {
+									bodyModified = true
+								}
 								// 更新替换后的内容
 								message["content"] = content
 							}
@@ -276,6 +285,10 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 			if err == nil {
 				// 重置 response body
 				resp.Body = io.NopCloser(bytes.NewBuffer(filteredResponseBody))
+				// 如果内容被修改，更新 responseBody 变量
+				if bodyModified {
+					responseBody = filteredResponseBody
+				}
 			} else {
 				// 如果序列化失败，保持原始响应内容
 				resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
@@ -287,6 +300,14 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 	} else {
 		// 如果没有有效的替换规则，保持原始响应内容
 		resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+	}
+
+	// 如果响应体被修改，更新 Content-Length 头部
+	if bodyModified {
+		// 获取新的内容长度
+		newContentLength := strconv.Itoa(len(responseBody))
+		// 更新响应头中的 Content-Length
+		resp.Header.Set("Content-Length", newContentLength)
 	}
 
 	// 我们不应该在解析响应体之前设置响应头，因为解析部分可能失败，
