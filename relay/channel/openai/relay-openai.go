@@ -62,7 +62,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 			}
 			mu.Lock()
 			data = data[6:]
-			if !strings.HasPrefix(data, "[DONE]") && strings.Contains(data, "\",\"system_fingerprint\":\"") {
+			if !strings.HasPrefix(data, "[DONE]") && !strings.Contains(data, "\",\"created\":1234567890,\"model\":\"\",\"") {
 				if lastStreamData != "" {
 					err := service.StringData(c, lastStreamData)
 					if err != nil {
