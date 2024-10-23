@@ -26,7 +26,7 @@ const FooterBar = () => {
       </a>
       由{' '}
       <a
-        href='https://github.com/Calcium-Ion'
+        href='https://github.com/wisdgod'
         target='_blank'
         rel='noreferrer'
       >
