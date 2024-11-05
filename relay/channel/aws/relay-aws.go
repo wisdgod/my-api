@@ -54,7 +54,7 @@ func awsModelID(requestModel string) (string, error) {
 		return awsModelID, nil
 	}
 
-	return "", nil
+	return requestModel, nil
 }
 
 func awsHandler(c *gin.Context, info *relaycommon.RelayInfo, requestMode int) (*relaymodel.OpenAIErrorWithStatusCode, *relaymodel.Usage) {

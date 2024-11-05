@@ -3,7 +3,6 @@ package dify
 import (
 	"bufio"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
@@ -12,6 +11,8 @@ import (
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func requestOpenAI2Dify(request dto.GeneralOpenAIRequest) *DifyChatRequest {
@@ -108,7 +109,7 @@ func difyStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Re
 	}
 	if usage.TotalTokens == 0 {
 		usage.PromptTokens = info.PromptTokens
-		usage.CompletionTokens, _ = service.CountTokenText("gpt-3.5-turbo", responseText)
+		usage.CompletionTokens, _ = service.CountTextToken("gpt-3.5-turbo", responseText)
 		usage.TotalTokens = usage.PromptTokens + usage.CompletionTokens
 	}
 	return nil, usage

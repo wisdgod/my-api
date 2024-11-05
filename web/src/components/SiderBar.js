@@ -248,27 +248,27 @@ const SiderBar = () => {
         }}
         selectedKeys={selectedKeys}
         renderWrapper={({ itemElement, isSubNav, isInSubNav, props }) => {
-          let chatLink = localStorage.getItem('chat_link');
-          if (!chatLink) {
-              let chats = localStorage.getItem('chats');
-              if (chats) {
-                  chats = JSON.parse(chats);
-                  if (Array.isArray(chats) && chats.length > 0) {
-                      for (let i = 0; i < chats.length; i++) {
-                          routerMap['chat' + i] = '/chat/' + i;
-                      }
-                      if (chats.length > 1) {
-                          // delete /chat
-                          if (routerMap['chat']) {
-                              delete routerMap['chat'];
-                          }
-                      } else {
-                          // rename /chat to /chat/0
-                          routerMap['chat'] = '/chat/0';
-                      }
-                  }
-              }
-          }
+            let chatLink = localStorage.getItem('chat_link');
+            if (!chatLink) {
+                let chats = localStorage.getItem('chats');
+                if (chats) {
+                    chats = JSON.parse(chats);
+                    if (Array.isArray(chats) && chats.length > 0) {
+                        for (let i = 0; i < chats.length; i++) {
+                            routerMap['chat' + i] = '/chat/' + i;
+                        }
+                        if (chats.length > 1) {
+                            // delete /chat
+                            if (routerMap['chat']) {
+                                delete routerMap['chat'];
+                            }
+                        } else {
+                            // rename /chat to /chat/0
+                            routerMap['chat'] = '/chat/0';
+                        }
+                    }
+                }
+            }
           return (
             <Link
               style={{ textDecoration: 'none' }}

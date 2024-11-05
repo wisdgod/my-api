@@ -1,6 +1,8 @@
 package aws
 
-import "one-api/relay/channel/claude"
+import (
+	"one-api/relay/channel/claude"
+)
 
 type AwsClaudeRequest struct {
 	// AnthropicVersion should be "bedrock-2023-05-31"

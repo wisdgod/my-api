@@ -1,8 +1,10 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
+	"one-api/dto"
 	relaycommon "one-api/relay/common"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GenerateTextOtherInfo(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, modelRatio, groupRatio, completionRatio, modelPrice float64) map[string]interface{} {
@@ -16,4 +18,14 @@ func GenerateTextOtherInfo(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, m
 	adminInfo["use_channel"] = ctx.GetStringSlice("use_channel")
 	other["admin_info"] = adminInfo
 	return other
+}
+
+func GenerateWssOtherInfo(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, usage *dto.RealtimeUsage, modelRatio, groupRatio, completionRatio, modelPrice float64) map[string]interface{} {
+	info := GenerateTextOtherInfo(ctx, relayInfo, modelRatio, groupRatio, completionRatio, modelPrice)
+	info["ws"] = true
+	info["audio_input"] = usage.InputTokenDetails.AudioTokens
+	info["audio_output"] = usage.OutputTokenDetails.AudioTokens
+	info["text_input"] = usage.InputTokenDetails.TextTokens
+	info["text_output"] = usage.OutputTokenDetails.TextTokens
+	return info
 }
