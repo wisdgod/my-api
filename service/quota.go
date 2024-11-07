@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"math"
 	"one-api/common"
 	"one-api/dto"
@@ -11,6 +10,8 @@ import (
 	relaycommon "one-api/relay/common"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func PreWssConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, usage *dto.RealtimeUsage) error {
@@ -78,8 +79,9 @@ func PostWssConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, mod
 
 	quota := 0
 	if !usePrice {
-		quota = int(math.Round(float64(textInputTokens)*ratio + float64(textOutTokens)*ratio*completionRatio))
-		quota += int(math.Round(float64(audioInputTokens)*ratio*audioRatio + float64(audioOutTokens)*ratio*audioRatio*audioCompletionRatio))
+		quota = int(math.Round(float64(textInputTokens) + float64(textOutTokens)*completionRatio))
+		quota += int(math.Round(float64(audioInputTokens)*audioRatio + float64(audioOutTokens)*audioRatio*audioCompletionRatio))
+		quota = int(math.Round(float64(quota) * ratio))
 		if ratio != 0 && quota <= 0 {
 			quota = 1
 		}

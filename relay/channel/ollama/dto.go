@@ -35,7 +35,7 @@ type OllamaEmbeddingRequest struct {
 }
 
 type OllamaEmbeddingResponse struct {
-	Error     string    `json:"error,omitempty"`
-	Model     string    `json:"model"`
-	Embedding []float64 `json:"embedding,omitempty"`
+	Error     string      `json:"error,omitempty"`
+	Model     string      `json:"model"`
+	Embedding [][]float64 `json:"embeddings,omitempty"`
 }
