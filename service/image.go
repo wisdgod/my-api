@@ -3,13 +3,13 @@ package service
 import (
 	"bytes"
 	"encoding/base64"
-	"errors"
 	"fmt"
-	"golang.org/x/image/webp"
 	"image"
 	"io"
 	"one-api/common"
 	"strings"
+
+	"golang.org/x/image/webp"
 )
 
 func DecodeBase64ImageData(base64String string) (image.Config, string, string, error) {
@@ -60,7 +60,7 @@ func DecodeUrlImageData(imageUrl string) (image.Config, string, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
-		err = errors.New(fmt.Sprintf("fail to get image from url: %s", response.Status))
+		err = fmt.Errorf("fail to get image from url: %s", response.Status)
 		return image.Config{}, "", err
 	}
 
@@ -91,11 +91,11 @@ func getImageConfig(reader io.Reader) (image.Config, string, error) {
 	// 读取图片的头部信息来获取图片尺寸
 	config, format, err := image.DecodeConfig(reader)
 	if err != nil {
-		err = errors.New(fmt.Sprintf("fail to decode image config(gif, jpg, png): %s", err.Error()))
+		err = fmt.Errorf("fail to decode image config(gif, jpg, png): %s", err.Error())
 		common.SysLog(err.Error())
 		config, err = webp.DecodeConfig(reader)
 		if err != nil {
-			err = errors.New(fmt.Sprintf("fail to decode image config(webp): %s", err.Error()))
+			err = fmt.Errorf("fail to decode image config(webp): %s", err.Error())
 			common.SysLog(err.Error())
 		}
 		format = "webp"

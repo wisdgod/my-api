@@ -18,7 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getAndValidImageRequest(c *gin.Context, info *relaycommon.RelayInfo) (*dto.ImageRequest, error) {
+func getAndValidImageRequest(c *gin.Context, _ *relaycommon.RelayInfo) (*dto.ImageRequest, error) {
 	imageRequest := &dto.ImageRequest{}
 	err := common.UnmarshalBodyReusable(c, imageRequest)
 	if err != nil {
@@ -101,7 +101,7 @@ func ImageHelper(c *gin.Context, relayMode int) *dto.OpenAIErrorWithStatusCode {
 	}
 
 	groupRatio := common.GetGroupRatio(relayInfo.Group)
-	userQuota, err := model.CacheGetUserQuota(relayInfo.UserId)
+	userQuota, _ := model.CacheGetUserQuota(relayInfo.UserId)
 
 	sizeRatio := 1.0
 	// Size
@@ -127,7 +127,7 @@ func ImageHelper(c *gin.Context, relayMode int) *dto.OpenAIErrorWithStatusCode {
 	quota := int(imageRatio * groupRatio * common.QuotaPerUnit)
 
 	if userQuota-quota < 0 {
-		return service.OpenAIErrorWrapperLocal(errors.New(fmt.Sprintf("image pre-consumed quota failed, user quota: %d, need quota: %d", userQuota, quota)), "insufficient_user_quota", http.StatusBadRequest)
+		return service.OpenAIErrorWrapperLocal(fmt.Errorf("image pre-consumed quota failed, user quota: %d, need quota: %d", userQuota, quota), "insufficient_user_quota", http.StatusBadRequest)
 	}
 
 	adaptor := GetAdaptor(relayInfo.ApiType)

@@ -2,9 +2,7 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/pkoukk/tiktoken-go"
 	"image"
 	"log"
 	"math"
@@ -14,6 +12,8 @@ import (
 	relaycommon "one-api/relay/common"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/pkoukk/tiktoken-go"
 )
 
 // tokenEncoderMap won't grow after initialization
@@ -36,7 +36,7 @@ func InitTokenEncoders() {
 	if err != nil {
 		common.FatalLog(fmt.Sprintf("failed to get gpt-4o token encoder: %s", err.Error()))
 	}
-	for model, _ := range common.GetDefaultModelRatioMap() {
+	for model := range common.GetDefaultModelRatioMap() {
 		if strings.HasPrefix(model, "gpt-3.5") {
 			tokenEncoderMap[model] = gpt35TokenEncoder
 		} else if strings.HasPrefix(model, "gpt-4") {
@@ -114,7 +114,7 @@ func getImageToken(imageUrl *dto.MessageImageUrl, model string, stream bool) (in
 	if strings.HasPrefix(imageUrl.Url, "http") {
 		config, format, err = DecodeUrlImageData(imageUrl.Url)
 	} else {
-		common.SysLog(fmt.Sprintf("decoding image"))
+		common.SysLog("decoding image")
 		config, format, _, err = DecodeBase64ImageData(imageUrl.Url)
 	}
 	if err != nil {
@@ -122,7 +122,7 @@ func getImageToken(imageUrl *dto.MessageImageUrl, model string, stream bool) (in
 	}
 
 	if config.Width == 0 || config.Height == 0 {
-		return 0, errors.New(fmt.Sprintf("fail to decode image config: %s", imageUrl.Url))
+		return 0, fmt.Errorf("fail to decode image config: %s", imageUrl.Url)
 	}
 	//// TODO: 适配官方auto计费
 	//if config.Width < 512 && config.Height < 512 {
@@ -169,7 +169,7 @@ func CountTokenChatRequest(request dto.GeneralOpenAIRequest, model string) (int,
 		var openaiTools []dto.OpenAITools
 		err := json.Unmarshal(toolsData, &openaiTools)
 		if err != nil {
-			return 0, errors.New(fmt.Sprintf("count_tools_token_fail: %s", err.Error()))
+			return 0, fmt.Errorf("count_tools_token_fail: %s", err.Error())
 		}
 		countStr := ""
 		for _, tool := range openaiTools {
@@ -243,7 +243,7 @@ func CountTokenRealtime(info *relaycommon.RelayInfo, request dto.RealtimeEvent, 
 	case dto.RealtimeEventTypeResponseDone:
 		// count tools token
 		if !info.IsFirstRequest {
-			if info.RealtimeTools != nil && len(info.RealtimeTools) > 0 {
+			if len(info.RealtimeTools) > 0 {
 				for _, tool := range info.RealtimeTools {
 					toolTokens, err := CountTokenInput(tool, model)
 					if err != nil {

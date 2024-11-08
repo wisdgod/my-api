@@ -59,7 +59,6 @@ func RelayMidjourneyImage(c *gin.Context) {
 	if err != nil {
 		log.Println("Failed to stream image:", err)
 	}
-	return
 }
 
 func RelayMidjourneyNotify(c *gin.Context) *dto.MidjourneyResponse {
@@ -102,7 +101,7 @@ func RelayMidjourneyNotify(c *gin.Context) *dto.MidjourneyResponse {
 	return nil
 }
 
-func coverMidjourneyTaskDto(c *gin.Context, originTask *model.Midjourney) (midjourneyTask dto.MidjourneyDto) {
+func coverMidjourneyTaskDto(_ *gin.Context, originTask *model.Midjourney) (midjourneyTask dto.MidjourneyDto) {
 	midjourneyTask.MjId = originTask.MjId
 	midjourneyTask.Progress = originTask.Progress
 	midjourneyTask.PromptEn = originTask.PromptEn
@@ -627,11 +626,11 @@ func RelayMidjourneySubmit(c *gin.Context, relayMode int) *dto.MidjourneyRespons
 	return nil
 }
 
-type taskChangeParams struct {
-	ID     string
-	Action string
-	Index  int
-}
+// type taskChangeParams struct {
+// 	ID     string
+// 	Action string
+// 	Index  int
+// }
 
 func getMjRequestPath(path string) string {
 	requestURL := path
