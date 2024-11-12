@@ -329,6 +329,7 @@
   "敏感信息不会发送到前端显示": "Sensitive information will not be displayed in the frontend",
   "保存 SMTP 设置": "Save SMTP Settings",
   "配置 GitHub OAuth App": "Configure GitHub OAuth App",
+  "配置 Linuxdo OAuth App": "Configure Linuxdo OAuth App",
   "用以支持通过 GitHub 进行登录注册": "To support login & registration via GitHub",
   "点击此处": "Click here",
   "管理你的 GitHub OAuth App": "Manage your GitHub OAuth App",
