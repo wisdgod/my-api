@@ -10,8 +10,7 @@ import Setting from './pages/Setting';
 import EditUser from './pages/User/EditUser';
 import { getLogo, getSystemName } from './helpers';
 import PasswordResetForm from './components/PasswordResetForm';
-import GitHubOAuth from './components/GitHubOAuth';
-import LinuxDoOAuth from './components/LinuxDoOAuth.js';
+import OAuth2Callback from "./components/OAuth2Callback.js";
 import PasswordResetConfirm from './components/PasswordResetConfirm';
 import { UserContext } from './context/User';
 import Channel from './pages/Channel';
@@ -178,7 +177,7 @@ function App() {
           path='/oauth/github'
           element={
             <Suspense fallback={<Loading></Loading>}>
-              <GitHubOAuth />
+              <OAuth2Callback type='github'></OAuth2Callback>
             </Suspense>
           }
         />
@@ -186,7 +185,7 @@ function App() {
           path='/oauth/linuxdo'
           element={
             <Suspense fallback={<Loading></Loading>}>
-              <LinuxDoOAuth />
+              <OAuth2Callback type='linuxdo'></OAuth2Callback>
             </Suspense>
           }
         />

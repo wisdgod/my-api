@@ -17,7 +17,7 @@ import {
   renderQuota,
 } from '../helpers/render';
 import {
-  Button,
+  Button, Divider,
   Dropdown,
   Form,
   InputNumber,
@@ -666,7 +666,7 @@ const ChannelsTable = () => {
     setActivePage(page);
     if (page === Math.ceil(channels.length / pageSize) + 1) {
       // In this case we have to load more data and then append them.
-      loadChannels(page - 1, pageSize, idSort).then((r) => {});
+      loadChannels(page - 1, pageSize, idSort).then((r) => { });
     }
   };
 
@@ -755,7 +755,7 @@ const ChannelsTable = () => {
             <Form.Select
               field='group'
               label='分组'
-              optionList={[{ label: '选择分组', value: null}, ...groupOptions]}
+              optionList={[{ label: '选择分组', value: null }, ...groupOptions]}
               initValue={null}
               onChange={(v) => {
                 setSearchGroup(v);
@@ -774,71 +774,34 @@ const ChannelsTable = () => {
           </Space>
         </div>
       </Form>
-      <div style={{ marginTop: 10, display: 'flex' }}>
-        <Space>
-          <Space>
-            <Typography.Text strong>使用ID排序</Typography.Text>
-            <Switch
-              checked={idSort}
-              label='使用ID排序'
-              uncheckedText='关'
-              aria-label='是否用ID排序'
-              onChange={(v) => {
-                localStorage.setItem('id-sort', v + '');
-                setIdSort(v);
-                loadChannels(0, pageSize, v)
-                  .then()
-                  .catch((reason) => {
-                    showError(reason);
-                  });
-              }}
-            ></Switch>
-          </Space>
-        </Space>
-      </div>
-
-      <Table
-        className={'channel-table'}
-        style={{ marginTop: 15 }}
-        columns={columns}
-        dataSource={pageData}
-        pagination={{
-          currentPage: activePage,
-          pageSize: pageSize,
-          total: channelCount,
-          pageSizeOpts: [10, 20, 50, 100],
-          showSizeChanger: true,
-          formatPageText: (page) => '',
-          onPageSizeChange: (size) => {
-            handlePageSizeChange(size).then();
-          },
-          onPageChange: handlePageChange,
-        }}
-        loading={loading}
-        onRow={handleRow}
-        rowSelection={
-          enableBatchDelete
-            ? {
-                onChange: (selectedRowKeys, selectedRows) => {
-                  // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-                  setSelectedChannels(selectedRows);
-                },
-              }
-            : null
-        }
-      />
+      <Divider style={{ marginBottom: 15 }} />
       <div
         style={{
           display: isMobile() ? '' : 'flex',
           marginTop: isMobile() ? 0 : -45,
           zIndex: 999,
-          position: 'relative',
           pointerEvents: 'none',
         }}
       >
         <Space
           style={{ pointerEvents: 'auto', marginTop: isMobile() ? 0 : 45 }}
         >
+          <Typography.Text strong>使用ID排序</Typography.Text>
+          <Switch
+            checked={idSort}
+            label='使用ID排序'
+            uncheckedText='关'
+            aria-label='是否用ID排序'
+            onChange={(v) => {
+              localStorage.setItem('id-sort', v + '');
+              setIdSort(v);
+              loadChannels(0, pageSize, v)
+                .then()
+                .catch((reason) => {
+                  showError(reason);
+                });
+            }}
+          ></Switch>
           <Button
             theme='light'
             type='primary'
@@ -891,9 +854,6 @@ const ChannelsTable = () => {
             刷新
           </Button>
         </Space>
-        {/*<div style={{width: '100%', pointerEvents: 'none', position: 'absolute'}}>*/}
-
-        {/*</div>*/}
       </div>
       <div style={{ marginTop: 20 }}>
         <Space>
@@ -947,6 +907,37 @@ const ChannelsTable = () => {
           </Popconfirm>
         </Space>
       </div>
+
+      <Table
+        className={'channel-table'}
+        style={{ marginTop: 15 }}
+        columns={columns}
+        dataSource={pageData}
+        pagination={{
+          currentPage: activePage,
+          pageSize: pageSize,
+          total: channelCount,
+          pageSizeOpts: [10, 20, 50, 100],
+          showSizeChanger: true,
+          formatPageText: (page) => '',
+          onPageSizeChange: (size) => {
+            handlePageSizeChange(size).then();
+          },
+          onPageChange: handlePageChange,
+        }}
+        loading={loading}
+        onRow={handleRow}
+        rowSelection={
+          enableBatchDelete
+            ? {
+              onChange: (selectedRowKeys, selectedRows) => {
+                // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+                setSelectedChannels(selectedRows);
+              },
+            }
+            : null
+        }
+      />
     </>
   );
 };

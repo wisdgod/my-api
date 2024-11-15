@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"one-api/common"
+	"os"
 	"strings"
 	"time"
 
@@ -39,7 +40,15 @@ const (
 )
 
 func GetLogByKey(key string) (logs []*Log, err error) {
-	err = LOG_DB.Joins("left join tokens on tokens.id = logs.token_id").Where("tokens.key = ?", strings.TrimPrefix(key, "sk-")).Find(&logs).Error
+	if os.Getenv("LOG_SQL_DSN") != "" {
+		var tk Token
+		if err = DB.Model(&Token{}).Where("`key`=?", strings.TrimPrefix(key, "sk-")).First(&tk).Error; err != nil {
+			return nil, err
+		}
+		err = LOG_DB.Model(&Log{}).Where("token_id=?", tk.Id).Find(&logs).Error
+	} else {
+		err = LOG_DB.Joins("left join tokens on tokens.id = logs.token_id").Where("tokens.key = ?", strings.TrimPrefix(key, "sk-")).Find(&logs).Error
+	}
 	return logs, err
 }
 
@@ -157,8 +166,7 @@ func GetUserLogs(userId int, logType int, startTimestamp int64, endTimestamp int
 	}
 	err = tx.Order("id desc").Limit(num).Offset(startIdx).Omit("id").Find(&logs).Error
 	for i := range logs {
-		var otherMap map[string]interface{}
-		otherMap = common.StrToMap(logs[i].Other)
+		otherMap := common.StrToMap(logs[i].Other)
 		if otherMap != nil {
 			// delete admin
 			delete(otherMap, "admin_info")

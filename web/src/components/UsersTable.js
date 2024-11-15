@@ -384,7 +384,7 @@ const UsersTable = () => {
     setActivePage(page);
     if (page === Math.ceil(users.length / ITEMS_PER_PAGE) + 1) {
       // In this case we have to load more data and then append them.
-      loadUsers(page - 1).then((r) => {});
+      loadUsers(page - 1).then((r) => { });
     }
   };
 
@@ -452,34 +452,42 @@ const UsersTable = () => {
       >
         <div style={{ display: 'flex' }}>
           <Space>
-          <Form.Input
-            label='搜索关键字'
-            icon='search'
-            field='keyword'
-            iconPosition='left'
-            placeholder='搜索用户的 ID，用户名，显示名称，以及邮箱地址 ...'
-            value={searchKeyword}
-            loading={searching}
-            onChange={(value) => handleKeywordChange(value)}
-          />
-          <Form.Select
-            field='group'
-            label='分组'
-            optionList={groupOptions}
-            onChange={(value) => {
-              setSearchGroup(value);
-              searchUsers(searchKeyword, value);
-            }}
-          />
-          <Button
-            label='查询'
-            type='primary'
-            htmlType='submit'
-            className='btn-margin-right'
-            style={{ marginRight: 8 }}
-          >
-            查询
-          </Button>
+            <Form.Input
+              label='搜索关键字'
+              icon='search'
+              field='keyword'
+              iconPosition='left'
+              placeholder='搜索用户的 ID，用户名，显示名称，以及邮箱地址 ...'
+              value={searchKeyword}
+              loading={searching}
+              onChange={(value) => handleKeywordChange(value)}
+            />
+            <Form.Select
+              field='group'
+              label='分组'
+              optionList={groupOptions}
+              onChange={(value) => {
+                setSearchGroup(value);
+                searchUsers(searchKeyword, value);
+              }}
+            />
+            <Button
+              label='查询'
+              type='primary'
+              htmlType='submit'
+              className='btn-margin-right'
+            >
+              查询
+            </Button>
+            <Button
+              theme='light'
+              type='primary'
+              onClick={() => {
+                setShowAddUser(true);
+              }}
+            >
+              添加用户
+            </Button>
           </Space>
         </div>
       </Form>
@@ -496,16 +504,6 @@ const UsersTable = () => {
         }}
         loading={loading}
       />
-      <Button
-        theme='light'
-        type='primary'
-        style={{ marginRight: 8 }}
-        onClick={() => {
-          setShowAddUser(true);
-        }}
-      >
-        添加用户
-      </Button>
     </>
   );
 };

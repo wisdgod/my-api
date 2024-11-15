@@ -8,9 +8,9 @@ import {
 } from '../helpers';
 
 import { ITEMS_PER_PAGE } from '../constants';
-import {renderGroup, renderQuota} from '../helpers/render';
+import { renderGroup, renderQuota } from '../helpers/render';
 import {
-  Button,
+  Button, Divider,
   Dropdown,
   Form,
   Modal,
@@ -532,13 +532,13 @@ const TokensTable = () => {
     setActivePage(page);
     if (page === Math.ceil(tokens.length / pageSize) + 1) {
       // In this case we have to load more data and then append them.
-      loadTokens(page - 1).then((r) => {});
+      loadTokens(page - 1).then((r) => { });
     }
   };
 
   const rowSelection = {
-    onSelect: (record, selected) => {},
-    onSelectAll: (selected, selectedRows) => {},
+    onSelect: (record, selected) => { },
+    onSelectAll: (selected, selectedRows) => { },
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedKeys(selectedRows);
     },
@@ -596,6 +596,40 @@ const TokensTable = () => {
           查询
         </Button>
       </Form>
+      <Divider style={{ margin: '15px 0' }} />
+      <div>
+        <Button
+          theme='light'
+          type='primary'
+          style={{ marginRight: 8 }}
+          onClick={() => {
+            setEditingToken({
+              id: undefined,
+            });
+            setShowEdit(true);
+          }}
+        >
+          添加令牌
+        </Button>
+        <Button
+          label='复制所选令牌'
+          type='warning'
+          onClick={async () => {
+            if (selectedKeys.length === 0) {
+              showError('请至少选择一个令牌！');
+              return;
+            }
+            let keys = '';
+            for (let i = 0; i < selectedKeys.length; i++) {
+              keys +=
+                selectedKeys[i].name + '    sk-' + selectedKeys[i].key + '\n';
+            }
+            await copyText(keys);
+          }}
+        >
+          复制所选令牌到剪贴板
+        </Button>
+      </div>
 
       <Table
         style={{ marginTop: 20 }}
@@ -619,37 +653,6 @@ const TokensTable = () => {
         rowSelection={rowSelection}
         onRow={handleRow}
       ></Table>
-      <Button
-        theme='light'
-        type='primary'
-        style={{ marginRight: 8 }}
-        onClick={() => {
-          setEditingToken({
-            id: undefined,
-          });
-          setShowEdit(true);
-        }}
-      >
-        添加令牌
-      </Button>
-      <Button
-        label='复制所选令牌'
-        type='warning'
-        onClick={async () => {
-          if (selectedKeys.length === 0) {
-            showError('请至少选择一个令牌！');
-            return;
-          }
-          let keys = '';
-          for (let i = 0; i < selectedKeys.length; i++) {
-            keys +=
-              selectedKeys[i].name + '    sk-' + selectedKeys[i].key + '\n';
-          }
-          await copyText(keys);
-        }}
-      >
-        复制所选令牌到剪贴板
-      </Button>
     </>
   );
 };

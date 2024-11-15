@@ -395,6 +395,7 @@ const PersonalSetting = () => {
               </div>
             </Card>
             <Card
+              style={{ marginTop: 10 }}
               footer={
                 <div>
                   <Typography.Text>邀请链接</Typography.Text>
@@ -432,7 +433,7 @@ const PersonalSetting = () => {
                 </Descriptions>
               </div>
             </Card>
-            <Card>
+            <Card style={{ marginTop: 10 }}>
               <Typography.Title heading={6}>个人信息</Typography.Title>
               <div style={{ marginTop: 20 }}>
                 <Typography.Text strong>邮箱</Typography.Text>
