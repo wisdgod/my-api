@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -24,7 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 )
 
-func newAwsClient(c *gin.Context, info *relaycommon.RelayInfo) (*bedrockruntime.Client, error) {
+func newAwsClient(_ *gin.Context, info *relaycommon.RelayInfo) (*bedrockruntime.Client, error) {
 	awsSecret := strings.Split(info.ApiKey, "|")
 	if len(awsSecret) != 3 {
 		return nil, errors.New("invalid aws secret key")
@@ -44,7 +43,7 @@ func wrapErr(err error) *relaymodel.OpenAIErrorWithStatusCode {
 	return &relaymodel.OpenAIErrorWithStatusCode{
 		StatusCode: http.StatusInternalServerError,
 		Error: relaymodel.OpenAIError{
-			Message: fmt.Sprintf("%s", err.Error()),
+			Message: err.Error(),
 		},
 	}
 }
@@ -79,13 +78,7 @@ func awsHandler(c *gin.Context, info *relaycommon.RelayInfo, requestMode int) (*
 		return wrapErr(errors.New("request not found")), nil
 	}
 	claudeReq := claudeReq_.(*claude.ClaudeRequest)
-	awsClaudeReq := &AwsClaudeRequest{
-		AnthropicVersion: "bedrock-2023-05-31",
-	}
-	if err = copier.Copy(awsClaudeReq, claudeReq); err != nil {
-		return wrapErr(errors.Wrap(err, "copy request")), nil
-	}
-
+	awsClaudeReq := copyRequest(claudeReq)
 	awsReq.Body, err = json.Marshal(awsClaudeReq)
 	if err != nil {
 		return wrapErr(errors.Wrap(err, "marshal request")), nil
@@ -137,12 +130,7 @@ func awsStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 	}
 	claudeReq := claudeReq_.(*claude.ClaudeRequest)
 
-	awsClaudeReq := &AwsClaudeRequest{
-		AnthropicVersion: "bedrock-2023-05-31",
-	}
-	if err = copier.Copy(awsClaudeReq, claudeReq); err != nil {
-		return wrapErr(errors.Wrap(err, "copy request")), nil
-	}
+	awsClaudeReq := copyRequest(claudeReq)
 	awsReq.Body, err = json.Marshal(awsClaudeReq)
 	if err != nil {
 		return wrapErr(errors.Wrap(err, "marshal request")), nil
