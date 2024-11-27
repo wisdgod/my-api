@@ -14,6 +14,7 @@ import (
 )
 
 func SetupApiRequestHeader(info *common.RelayInfo, c *gin.Context, req *http.Header) {
+	req.Set("User-Agent", "Mozilla/5.0")
 	if info.RelayMode == constant.RelayModeAudioTranscription || info.RelayMode == constant.RelayModeAudioTranslation {
 		// multipart/form-data
 	} else if info.RelayMode == constant.RelayModeRealtime {
