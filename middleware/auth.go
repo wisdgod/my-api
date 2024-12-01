@@ -178,7 +178,7 @@ func TokenAuth() func(c *gin.Context) {
 			c.Request.Header.Set("Authorization", "Bearer "+key)
 		}
 		key := c.Request.Header.Get("Authorization")
-		parts := make([]string, 0)
+		var parts []string
 		key = strings.TrimPrefix(key, "Bearer ")
 		if key == "" || key == "midjourney-proxy" {
 			key = c.Request.Header.Get("mj-api-secret")
@@ -213,6 +213,7 @@ func TokenAuth() func(c *gin.Context) {
 		}
 		c.Set("id", token.UserId)
 		c.Set("token_id", token.Id)
+		c.Set("token_key", token.Key)
 		c.Set("token_name", token.Name)
 		c.Set("token_unlimited_quota", token.UnlimitedQuota)
 		if !token.UnlimitedQuota {

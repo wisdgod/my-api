@@ -15,6 +15,7 @@ type RelayInfo struct {
 	ChannelType          int
 	ChannelId            int
 	TokenId              int
+	TokenKey             string
 	UserId               int
 	Group                string
 	TokenUnlimited       bool
@@ -59,6 +60,7 @@ func GenRelayInfo(c *gin.Context) *RelayInfo {
 	channelId := c.GetInt("channel_id")
 
 	tokenId := c.GetInt("token_id")
+	tokenKey := c.GetString("token_key")
 	userId := c.GetInt("id")
 	group := c.GetString("group")
 	tokenUnlimited := c.GetBool("token_unlimited_quota")
@@ -74,6 +76,7 @@ func GenRelayInfo(c *gin.Context) *RelayInfo {
 		ChannelType:       channelType,
 		ChannelId:         channelId,
 		TokenId:           tokenId,
+		TokenKey:          tokenKey,
 		UserId:            userId,
 		Group:             group,
 		TokenUnlimited:    tokenUnlimited,

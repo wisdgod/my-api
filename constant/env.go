@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var StreamingTimeout = common.GetEnvOrDefault("STREAMING_TIMEOUT", 30)
+var StreamingTimeout = common.GetEnvOrDefault("STREAMING_TIMEOUT", 60)
 var DifyDebug = common.GetEnvOrDefaultBool("DIFY_DEBUG", true)
 
 // ForceStreamOption 覆盖请求参数，强制返回usage信息
