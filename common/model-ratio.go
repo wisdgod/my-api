@@ -150,6 +150,7 @@ var defaultModelRatio = map[string]float64{
 	"360gpt-turbo":                   0.0858, // ¥0.0012 / 1k tokens
 	"360gpt-turbo-responsibility-8k": 0.8572, // ¥0.012 / 1k tokens
 	"360gpt-pro":                     0.8572, // ¥0.012 / 1k tokens
+	"360gpt2-pro":                    0.8572, // ¥0.012 / 1k tokens
 	"embedding-bert-512-v1":          0.0715, // ¥0.001 / 1k tokens
 	"embedding_s1_v1":                0.0715, // ¥0.001 / 1k tokens
 	"semantic_similarity_s1_v1":      0.0715, // ¥0.001 / 1k tokens
@@ -181,8 +182,8 @@ var defaultModelRatio = map[string]float64{
 	// Perplexity online 模型对搜索额外收费，有需要应自行调整，此处不计入搜索费用
 	"llama-3-sonar-small-32k-chat":   0.2 / 1000 * USD,
 	"llama-3-sonar-small-32k-online": 0.2 / 1000 * USD,
-	"llama-3-sonar-large-32k-chat":   1 / 1000 * USD,
-	"llama-3-sonar-large-32k-online": 1 / 1000 * USD,
+	"llama-3-sonar-large-32k-chat":   1.0 / 1000 * USD,
+	"llama-3-sonar-large-32k-online": 1.0 / 1000 * USD,
 }
 
 var defaultModelPrice = map[string]float64{
