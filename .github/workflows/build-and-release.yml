@@ -145,7 +145,7 @@ jobs:
           chmod +x one-api*
           ../upx-4.2.4-amd64_linux/upx --best --lzma one-api
           ../upx-4.2.4-amd64_linux/upx --best --lzma one-api-arm64
-          ../upx-4.2.4-amd64_linux/upx --best --lzma one-api-macos
+          ../upx-4.2.4-amd64_linux/upx --best --lzma --force-macos one-api-macos
           ../upx-4.2.4-amd64_linux/upx --best --lzma one-api.exe
 
       - name: 发布到 GitHub
