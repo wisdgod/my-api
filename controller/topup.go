@@ -2,9 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"github.com/Calcium-Ion/go-epay/epay"
-	"github.com/gin-gonic/gin"
-	"github.com/samber/lo"
 	"log"
 	"net/url"
 	"one-api/common"
@@ -14,6 +11,10 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/Calcium-Ion/go-epay/epay"
+	"github.com/gin-gonic/gin"
+	"github.com/samber/lo"
 )
 
 type EpayRequest struct {
@@ -85,14 +86,12 @@ func RequestEpay(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "error", "data": "充值金额过低"})
 		return
 	}
-
-	var payType epay.PurchaseType
+	payType := "wxpay"
 	if req.PaymentMethod == "zfb" {
-		payType = epay.Alipay
+		payType = "alipay"
 	}
 	if req.PaymentMethod == "wx" {
 		req.PaymentMethod = "wxpay"
-		payType = epay.WechatPay
 	}
 	callBackAddress := service.GetCallbackAddress()
 	returnUrl, _ := url.Parse(constant.ServerAddress + "/log")

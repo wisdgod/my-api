@@ -5,16 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
+	"one-api/constant"
 	"one-api/dto"
-	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // https://cloud.baidu.com/doc/WENXINWORKSHOP/s/flfmc9do2
@@ -75,7 +76,7 @@ func streamResponseBaidu2OpenAI(baiduResponse *BaiduChatStreamResponse) *dto.Cha
 	var choice dto.ChatCompletionsStreamResponseChoice
 	choice.Delta.SetContentString(baiduResponse.Result)
 	if baiduResponse.IsEnd {
-		choice.FinishReason = &relaycommon.StopFinishReason
+		choice.FinishReason = &constant.FinishReasonStop
 	}
 	response := dto.ChatCompletionsStreamResponse{
 		Id:      baiduResponse.Id,

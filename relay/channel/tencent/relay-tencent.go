@@ -8,21 +8,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
+	"one-api/constant"
 	"one-api/dto"
-	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // https://cloud.tencent.com/document/product/1729/97732
 
-func requestOpenAI2Tencent(a *Adaptor, request dto.GeneralOpenAIRequest) *TencentChatRequest {
+func requestOpenAI2Tencent(_ *Adaptor, request dto.GeneralOpenAIRequest) *TencentChatRequest {
 	messages := make([]*TencentMessage, 0, len(request.Messages))
 	for i := 0; i < len(request.Messages); i++ {
 		message := request.Messages[i]
@@ -81,7 +82,7 @@ func streamResponseTencent2OpenAI(TencentResponse *TencentChatResponse) *dto.Cha
 		var choice dto.ChatCompletionsStreamResponseChoice
 		choice.Delta.SetContentString(TencentResponse.Choices[0].Delta.Content)
 		if TencentResponse.Choices[0].FinishReason == "stop" {
-			choice.FinishReason = &relaycommon.StopFinishReason
+			choice.FinishReason = &constant.FinishReasonStop
 		}
 		response.Choices = append(response.Choices, choice)
 	}
