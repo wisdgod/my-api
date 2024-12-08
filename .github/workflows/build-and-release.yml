@@ -59,6 +59,7 @@ jobs:
             cgo_enabled: 1
             ldflags: "-s -w -X 'one-api/common.Version=$(git describe --tags)' -extldflags '-static'"
             cc: aarch64-linux-gnu-gcc
+            extra: " -tags \"osusergo netgo\""
 
           - os: macos-latest
             arch: amd64
@@ -75,7 +76,6 @@ jobs:
             output_name: one-api.exe
             cgo_enabled: 0
             ldflags: "-s -w -X 'one-api/common.Version=$(git describe --tags)'"
-            extra: " -tags \"osusergo netgo\""
 
     runs-on: ${{ matrix.os }}
     steps:
