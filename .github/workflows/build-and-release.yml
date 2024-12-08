@@ -38,7 +38,7 @@ jobs:
           name: frontend-build
           path: web/dist
 
-  backend_build_and_publish:
+  backend_build:
     needs: frontend_build
     strategy:
       matrix:
@@ -75,6 +75,7 @@ jobs:
             output_name: one-api.exe
             cgo_enabled: 0
             ldflags: "-s -w -X 'one-api/common.Version=$(git describe --tags)'"
+            extra: " -tags \"osusergo netgo\""
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -113,7 +114,7 @@ jobs:
             export CC=$CC
           fi
           go mod download
-          go build -ldflags "${{ matrix.ldflags }}" -o $OUTPUT_NAME
+          go build -trimpath${{ matrix.extra || '' }} -ldflags "${{ matrix.ldflags }}" -o $OUTPUT_NAME
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4.4.3
@@ -121,12 +122,24 @@ jobs:
           name: ${{ matrix.output_name }}
           path: ${{ matrix.output_name }}
 
+  publish_release:
+    needs: backend_build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: 下载所有构建产物
+        uses: actions/download-artifact@v4.1.8
+        with:
+          pattern: one-api*
+          merge-multiple: true
+          path: artifacts
+
       - name: 发布到 GitHub
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2.0.9
         with:
-          files: ${{ matrix.output_name }}
-          draft: true
+          files: artifacts/one-api*
+          draft: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
