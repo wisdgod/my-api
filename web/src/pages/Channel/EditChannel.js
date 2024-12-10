@@ -996,7 +996,12 @@ const EditChannel = (props) => {
             name="priority"
             placeholder={'渠道优先级'}
             onChange={(value) => {
-              handleInputChange('priority', parseInt(value));
+              const number = parseInt(value);
+              if (isNaN(number)) {
+                handleInputChange('priority', value);
+              } else {
+                handleInputChange('priority', number);
+              }
             }}
             value={inputs.priority}
             autoComplete="new-password"
@@ -1011,7 +1016,12 @@ const EditChannel = (props) => {
             name="weight"
             placeholder={'渠道权重'}
             onChange={(value) => {
-              handleInputChange('weight', parseInt(value));
+              const number = parseInt(value);
+              if (isNaN(number)) {
+                handleInputChange('weight', value);
+              } else {
+                handleInputChange('weight', number);
+              }
             }}
             value={inputs.weight}
             autoComplete="new-password"

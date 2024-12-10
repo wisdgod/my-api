@@ -10,7 +10,7 @@ import (
 
 func GetGroups(c *gin.Context) {
 	groupNames := make([]string, 0)
-	for groupName, _ := range common.GroupRatio {
+	for groupName := range common.GroupRatio {
 		groupNames = append(groupNames, groupName)
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -25,7 +25,7 @@ func GetUserGroups(c *gin.Context) {
 	userGroup := ""
 	userId := c.GetInt("id")
 	userGroup, _ = model.CacheGetUserGroup(userId)
-	for groupName, _ := range common.GroupRatio {
+	for groupName := range common.GroupRatio {
 		// UserUsableGroups contains the groups that the user can use
 		userUsableGroups := common.GetUserUsableGroups(userGroup)
 		if _, ok := userUsableGroups[groupName]; ok {

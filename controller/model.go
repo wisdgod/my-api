@@ -2,7 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"one-api/common"
 	"one-api/constant"
@@ -15,6 +14,8 @@ import (
 	"one-api/relay/channel/moonshot"
 	relaycommon "one-api/relay/common"
 	relayconstant "one-api/relay/constant"
+
+	"github.com/gin-gonic/gin"
 )
 
 // https://platform.openai.com/docs/api-reference/models/list
@@ -108,7 +109,7 @@ func init() {
 			Parent:     nil,
 		})
 	}
-	for modelName, _ := range constant.MidjourneyModel2Action {
+	for modelName := range constant.MidjourneyModel2Action {
 		openAIModels = append(openAIModels, dto.OpenAIModels{
 			Id:         modelName,
 			Object:     "model",
@@ -149,7 +150,7 @@ func ListModels(c *gin.Context) {
 		} else {
 			tokenModelLimit = map[string]bool{}
 		}
-		for allowModel, _ := range tokenModelLimit {
+		for allowModel := range tokenModelLimit {
 			if _, ok := openAIModelsMap[allowModel]; ok {
 				userOpenAiModels = append(userOpenAiModels, openAIModelsMap[allowModel])
 			} else {
