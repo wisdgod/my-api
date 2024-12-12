@@ -133,16 +133,6 @@ const SiderBar = () => {
         icon: <IconHistogram />,
       },
       {
-        text: '数据看板',
-        itemKey: 'detail',
-        to: '/detail',
-        icon: <IconCalendarClock />,
-        className:
-          localStorage.getItem('enable_data_export') === 'true'
-            ? 'semi-navigation-item-normal'
-            : 'tableHiddle',
-      },
-      {
         text: '绘图',
         itemKey: 'midjourney',
         to: '/midjourney',
