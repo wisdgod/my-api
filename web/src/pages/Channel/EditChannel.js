@@ -715,6 +715,8 @@ const EditChannel = (props) => {
             required
             multiple
             selection
+            filter
+            searchPosition='dropdown'
             onChange={(value) => {
               handleInputChange('models', value);
             }}
