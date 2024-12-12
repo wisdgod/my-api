@@ -25,7 +25,7 @@ import { Layout } from '@douyinfe/semi-ui';
 import Midjourney from './pages/Midjourney';
 import Pricing from './pages/Pricing/index.js';
 import Task from "./pages/Task/index.js";
-import Playground from './components/Playground.js';
+import Playground from './pages/Playground/Playground.js';
 
 const Home = lazy(() => import('./pages/Home'));
 const Detail = lazy(() => import('./pages/Detail'));
