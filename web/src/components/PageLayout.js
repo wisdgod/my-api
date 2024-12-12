@@ -6,7 +6,7 @@ import FooterBar from './Footer.js';
 import { ToastContainer } from 'react-toastify';
 import React, { useContext } from 'react';
 import { StyleContext } from '../context/Style/index.js';
-const { Sider, Content, Header, Footer } = Layout;
+const { Sider, Content, Header } = Layout;
 
 
 const PageLayout = () => {
@@ -23,7 +23,7 @@ const PageLayout = () => {
         </Sider>
         <Layout>
           <Content
-            style={{ overflowY: styleState.shouldInnerPadding?'auto':'hidden', padding: styleState.shouldInnerPadding? '24px': '0' }}
+            style={{ overflowY: 'auto', padding: styleState.shouldInnerPadding ? '24px' : '0' }}
           >
             <App />
           </Content>
