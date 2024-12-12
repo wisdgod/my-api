@@ -21,15 +21,16 @@ jobs:
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4.1.0
         with:
-          node-version: 16
+          node-version: '>=22'
 
       - name: 安装依赖并构建前端
         env:
           CI: ""
         run: |
           cd web
-          npm install
-          VITE_REACT_APP_VERSION=$(git describe --tags) REACT_APP_VERSION=$(git describe --tags) npm run build
+          npm install -g pnpm
+          pnpm install
+          VITE_REACT_APP_VERSION=$(git describe --tags) pnpm run build
           cd ..
 
       - name: 上传前端构建产物
