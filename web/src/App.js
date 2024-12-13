@@ -21,11 +21,11 @@ import TopUp from './pages/TopUp';
 import Log from './pages/Log';
 import Chat from './pages/Chat';
 import Chat2Link from './pages/Chat2Link';
-import { Layout } from '@douyinfe/semi-ui';
 import Midjourney from './pages/Midjourney';
 import Pricing from './pages/Pricing/index.js';
 import Task from "./pages/Task/index.js";
 import Playground from './pages/Playground/Playground.js';
+import { useTranslation } from 'react-i18next';
 
 const Home = lazy(() => import('./pages/Home'));
 const Detail = lazy(() => import('./pages/Detail'));
@@ -34,6 +34,7 @@ const About = lazy(() => import('./pages/About'));
 function App() {
   const [userState, userDispatch] = useContext(UserContext);
   // const [statusState, statusDispatch] = useContext(StatusContext);
+  const { i18n } = useTranslation();
 
   const loadUser = () => {
     let user = localStorage.getItem('user');
@@ -56,7 +57,12 @@ function App() {
         linkElement.href = logo;
       }
     }
-  }, []);
+    // 从localStorage获取上次使用的语言
+    const savedLang = localStorage.getItem('i18nextLng');
+    if (savedLang) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   return (
     <>

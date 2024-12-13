@@ -17,7 +17,7 @@ body {
   flex-direction: column;
 }
 
-#root > section > header > section > div > div > div > div.semi-navigation-header-list-outer > div.semi-navigation-list-wrapper > ul > div > a > li > span{
+#root>section>header>section>div>div>div>div.semi-navigation-header-list-outer>div.semi-navigation-list-wrapper>ul>div>a>li>span {
   font-weight: 600 !important;
 }
 
@@ -25,17 +25,34 @@ body {
   padding-right: 30px;
 }
 
-/*.panel-desc-card {
-  min-width: 320px;
-}*/
-
 @media only screen and (max-width: 767px) {
-  #root > section > header > section > div > div > div > div.semi-navigation-header-list-outer > div.semi-navigation-list-wrapper > ul > div > a > li {
+
+  /*.semi-navigation-sub-wrap .semi-navigation-sub-title, .semi-navigation-item {*/
+  /*  padding: 0 0;*/
+  /*}*/
+  .topnav .semi-navigation-list-wrapper {
+    max-width: calc(55vw - 20px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  #root>section>header>section>div>div>div>div.semi-navigation-footer>div>a>li {
+    padding: 0 0;
+  }
+
+  #root>section>header>section>div>div>div>div.semi-navigation-header-list-outer>div.semi-navigation-list-wrapper>ul>div>a>li {
     padding: 0 5px;
   }
-  #root > section > header > section > div > div > div > div.semi-navigation-footer > div:nth-child(1) > a > li {
+
+  #root>section>header>section>div>div>div>div.semi-navigation-footer>div:nth-child(1)>a>li {
     padding: 0 5px;
   }
+
+  .semi-navigation-footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .semi-table-tbody,
   .semi-table-row,
   .semi-table-row-cell {
@@ -43,12 +60,15 @@ body {
     width: auto !important;
     padding: 2px !important;
   }
+
   .semi-table-row-cell {
     border-bottom: 0 !important;
   }
-  .semi-table-tbody > .semi-table-row {
+
+  .semi-table-tbody>.semi-table-row {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
+
   .semi-space {
     /*display: block!important;*/
     display: flex;
@@ -63,12 +83,12 @@ body {
   }
 }
 
-.semi-table-tbody > .semi-table-row > .semi-table-row-cell {
+.semi-table-tbody>.semi-table-row>.semi-table-row-cell {
   padding: 16px 14px;
 }
 
 .channel-table {
-  .semi-table-tbody > .semi-table-row > .semi-table-row-cell {
+  .semi-table-tbody>.semi-table-row>.semi-table-row-cell {
     padding: 16px 8px;
   }
 }
@@ -104,11 +124,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-/*.semi-navigation-vertical {
-  display: flex;
-  flex-direction: column;
-}*/
 
 .semi-navigation-item {
   margin-bottom: 0;

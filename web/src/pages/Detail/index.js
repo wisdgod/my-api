@@ -20,8 +20,10 @@ import {
 } from '../../helpers/render';
 import { UserContext } from '../../context/User/index.js';
 import { StyleContext } from '../../context/Style/index.js';
+import { useTranslation } from 'react-i18next';
 
 const Detail = (props) => {
+  const { t } = useTranslation();
   const formRef = useRef();
   let now = new Date();
   const [userState, userDispatch] = useContext(UserContext);
@@ -84,8 +86,8 @@ const Detail = (props) => {
     },
     title: {
       visible: true,
-      text: '模型调用次数占比',
-      subtext: `总计：${renderNumber(times)}`,
+      text: t('模型调用次数占比'),
+      subtext: `${t('总计')}：${renderNumber(times)}`,
     },
     legends: {
       visible: true,
@@ -124,8 +126,8 @@ const Detail = (props) => {
     },
     title: {
       visible: true,
-      text: '模型消耗分布',
-      subtext: `总计：${renderQuota(consumeQuota, 2)}`,
+      text: t('模型消耗分布'),
+      subtext: `${t('总计')}：${renderQuota(consumeQuota, 2)}`,
     },
     bar: {
       // The state style of bar
@@ -167,7 +169,7 @@ const Detail = (props) => {
           }
           // add to first
           array.unshift({
-            key: '总计',
+            key: t('总计'),
             value: renderQuotaNumberWithDigit(sum, 4),
           });
           return array;
@@ -208,7 +210,7 @@ const Detail = (props) => {
         if (data.length === 0) {
           data.push({
             count: 0,
-            model_name: '无数据',
+            model_name: t('无数据'),
             quota: 0,
             created_at: now.getTime() / 1000,
           });
@@ -330,7 +332,7 @@ const Detail = (props) => {
       data: [{ id: 'id0', values: newPieData }],
       title: {
         ...prev.title,
-        subtext: `总计：${renderNumber(totalTimes)}`
+        subtext: `${t('总计')}：${renderNumber(totalTimes)}`
       },
       color: {
         specified: newModelColors
@@ -342,7 +344,7 @@ const Detail = (props) => {
       data: [{ id: 'barData', values: newLineData }],
       title: {
         ...prev.title,
-        subtext: `总计：${renderQuota(totalQuota, 2)}`
+        subtext: `${t('总计')}：${renderQuota(totalQuota, 2)}`
       },
       color: {
         specified: newModelColors
@@ -381,14 +383,14 @@ const Detail = (props) => {
     <>
       <Layout>
         <Layout.Header>
-          <h3>数据看板</h3>
+          <h3>{t('数据看板')}</h3>
         </Layout.Header>
         <Layout.Content>
           <Form ref={formRef} layout='horizontal' style={{ marginTop: 10 }}>
             <>
               <Form.DatePicker
                 field='start_timestamp'
-                label='起始时间'
+                label={t('起始时间')}
                 style={{ width: 272 }}
                 initValue={start_timestamp}
                 value={start_timestamp}
@@ -401,7 +403,7 @@ const Detail = (props) => {
               <Form.DatePicker
                 field='end_timestamp'
                 fluid
-                label='结束时间'
+                label={t('结束时间')}
                 style={{ width: 272 }}
                 initValue={end_timestamp}
                 value={end_timestamp}
@@ -411,15 +413,15 @@ const Detail = (props) => {
               />
               <Form.Select
                 field='data_export_default_time'
-                label='时间粒度'
+                label={t('时间粒度')}
                 style={{ width: 176 }}
                 initValue={dataExportDefaultTime}
-                placeholder={'时间粒度'}
+                placeholder={t('时间粒度')}
                 name='data_export_default_time'
                 optionList={[
-                  { label: '小时', value: 'hour' },
-                  { label: '天', value: 'day' },
-                  { label: '周', value: 'week' },
+                  { label: t('小时'), value: 'hour' },
+                  { label: t('天'), value: 'day' },
+                  { label: t('周'), value: 'week' },
                 ]}
                 onChange={(value) =>
                   handleInputChange(value, 'data_export_default_time')
@@ -429,17 +431,17 @@ const Detail = (props) => {
                 <>
                   <Form.Input
                     field='username'
-                    label='用户名称'
+                    label={t('用户名称')}
                     style={{ width: 176 }}
                     value={username}
-                    placeholder={'可选值'}
+                    placeholder={t('可选值')}
                     name='username'
                     onChange={(value) => handleInputChange(value, 'username')}
                   />
                 </>
               )}
               <Button
-                label='查询'
+                label={t('查询')}
                 type='primary'
                 htmlType='submit'
                 className='btn-margin-right'
@@ -447,7 +449,7 @@ const Detail = (props) => {
                 loading={loading}
                 style={{ marginTop: 24 }}
               >
-                查询
+                {t('查询')}
               </Button>
               <Form.Section>
               </Form.Section>
@@ -458,13 +460,13 @@ const Detail = (props) => {
               <Col span={styleState.isMobile ? 24 : 8}>
                 <Card className='panel-desc-card'>
                   <Descriptions row size="small">
-                    <Descriptions.Item itemKey='当前余额'>
+                    <Descriptions.Item itemKey={t('当前余额')}>
                       {renderQuota(userState?.user?.quota)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey='历史消耗'>
+                    <Descriptions.Item itemKey={t('历史消耗')}>
                       {renderQuota(userState?.user?.used_quota)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey='请求次数'>
+                    <Descriptions.Item itemKey={t('请求次数')}>
                       {userState.user?.request_count}
                     </Descriptions.Item>
                   </Descriptions>
@@ -473,13 +475,13 @@ const Detail = (props) => {
               <Col span={styleState.isMobile ? 24 : 8}>
                 <Card>
                   <Descriptions row size="small">
-                    <Descriptions.Item itemKey='统计额度'>
+                    <Descriptions.Item itemKey={t('统计额度')}>
                       {renderQuota(consumeQuota)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey='统计Tokens'>
+                    <Descriptions.Item itemKey={t('统计Tokens')}>
                       {consumeTokens}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey='统计次数'>
+                    <Descriptions.Item itemKey={t('统计次数')}>
                       {times}
                     </Descriptions.Item>
                   </Descriptions>
@@ -488,13 +490,13 @@ const Detail = (props) => {
               <Col span={styleState.isMobile ? 24 : 8}>
                 <Card>
                   <Descriptions row size='small'>
-                    <Descriptions.Item itemKey='平均RPM'>
+                    <Descriptions.Item itemKey={t('平均RPM')}>
                       {(times /
                         ((Date.parse(end_timestamp) -
                           Date.parse(start_timestamp)) /
                           60000)).toFixed(3)}
                     </Descriptions.Item>
-                    <Descriptions.Item itemKey='平均TPM'>
+                    <Descriptions.Item itemKey={t('平均TPM')}>
                       {(consumeTokens /
                         ((Date.parse(end_timestamp) -
                           Date.parse(start_timestamp)) /
@@ -506,7 +508,7 @@ const Detail = (props) => {
             </Row>
             <Card style={{ marginTop: 20 }}>
               <Tabs type="line" defaultActiveKey="1">
-                <Tabs.TabPane tab="消耗分布" itemKey="1">
+                <Tabs.TabPane tab={t('消耗分布')} itemKey="1">
                   <div style={{ height: 500 }}>
                     <VChart
                       spec={spec_line}
@@ -514,7 +516,7 @@ const Detail = (props) => {
                     />
                   </div>
                 </Tabs.TabPane>
-                <Tabs.TabPane tab="调用次数分布" itemKey="2">
+                <Tabs.TabPane tab={t('调用次数分布')} itemKey="2">
                   <div style={{ height: 500 }}>
                     <VChart
                       spec={spec_pie}

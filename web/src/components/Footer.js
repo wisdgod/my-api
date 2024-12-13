@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { getFooterHTML, getSystemName } from '../helpers';
 import { Layout, Tooltip } from '@douyinfe/semi-ui';
 
 const FooterBar = () => {
+  const { t } = useTranslation();
   const systemName = getSystemName();
   const [footer, setFooter] = useState(getFooterHTML());
   let remainCheckTimes = 5;
@@ -24,7 +25,7 @@ const FooterBar = () => {
       >
         My API {import.meta.env.VITE_REACT_APP_VERSION}{' '}
       </a>
-      由{' '}
+      {t('由')}{' '}
       <a
         href='https://github.com/wisdgod'
         target='_blank'
@@ -32,7 +33,7 @@ const FooterBar = () => {
       >
         wisdgod
       </a>{' '}
-      开发，基于{' '}
+      {t('开发，基于')}{' '}
       <a
         href='https://github.com/songquanpeng/one-api'
         target='_blank'
@@ -40,7 +41,7 @@ const FooterBar = () => {
       >
         One API
         </a>{' '}
-      与{' '}
+      {t('与')}{' '}
       <a
         href='https://github.com/Calcium-Ion/new-api'
         target='_blank'

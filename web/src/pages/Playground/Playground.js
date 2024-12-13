@@ -1,29 +1,15 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/User/index.js';
 import { API, getUserIdFromLocalStorage, showError } from '../../helpers/index.js';
 import { Card, Chat, Input, Layout, Select, Slider, TextArea, Typography, Button } from '@douyinfe/semi-ui';
 import { SSE } from 'sse';
 import { IconSetting } from '@douyinfe/semi-icons';
 import { StyleContext } from '../../context/Style/index.js';
-
-const defaultMessage = [
-  {
-    role: 'user',
-    id: '2',
-    createAt: 1715676751919,
-    content: "你好",
-  },
-  {
-    role: 'assistant',
-    id: '3',
-    createAt: 1715676751919,
-    content: "你好，请问有什么可以帮助您的吗？",
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 const roleInfo = {
-  user:  {
+  user: {
     name: 'User',
     avatar: 'https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/docs-icon.png'
   },
@@ -43,6 +29,23 @@ function getId() {
 }
 
 const Playground = () => {
+  const { t } = useTranslation();
+
+  const defaultMessage = [
+    {
+      role: 'user',
+      id: '2',
+      createAt: 1715676751919,
+      content: t('你好'),
+    },
+    {
+      role: 'assistant',
+      id: '3',
+      createAt: 1715676751919,
+      content: t('你好，请问有什么可以帮助您的吗？'),
+    }
+  ];
+
   const [inputs, setInputs] = useState({
     model: 'gpt-4o-mini',
     group: '',
@@ -65,7 +68,7 @@ const Playground = () => {
 
   useEffect(() => {
     if (searchParams.get('expired')) {
-      showError('未登录或登录已过期，请重新登录！');
+      showError(t('未登录或登录已过期，请重新登录！'));
     }
     let status = localStorage.getItem('status');
     if (status) {
@@ -86,7 +89,7 @@ const Playground = () => {
       }));
       setModels(localModelOptions);
     } else {
-      showError(message);
+      showError(t(message));
     }
   };
 
@@ -115,7 +118,7 @@ const Playground = () => {
         }
       } else {
         localGroupOptions = [{
-          label: '用户分组',
+          label: t('用户分组'),
           value: '',
         }];
         setGroups(localGroupOptions);
@@ -123,7 +126,7 @@ const Playground = () => {
       setGroups(localGroupOptions);
       handleInputChange('group', localGroupOptions[0].value);
     } else {
-      showError(message);
+      showError(t(message));
     }
   };
 
@@ -148,7 +151,7 @@ const Playground = () => {
     let source = new SSE('/pg/chat/completions', {
       headers: {
         "Content-Type": "application/json",
-        "My-Api-User": getUserIdFromLocalStorage(),
+        "New-Api-User": getUserIdFromLocalStorage(),
       },
       method: "POST",
       payload: JSON.stringify(payload),
@@ -254,7 +257,7 @@ const Playground = () => {
     // console.log("Generate Mock Response: ", content);
     setMessage((message) => {
       const lastMessage = message[message.length - 1];
-      let newMessage = {...lastMessage};
+      let newMessage = { ...lastMessage };
       if (lastMessage.status === 'loading' || lastMessage.status === 'incomplete') {
         newMessage = {
           ...newMessage,
@@ -262,7 +265,7 @@ const Playground = () => {
           status: 'incomplete'
         }
       }
-      return [ ...message.slice(0, -1), newMessage ]
+      return [...message.slice(0, -1), newMessage]
     })
   }, []);
 
@@ -294,9 +297,11 @@ const Playground = () => {
     const { detailProps } = props;
     const { clearContextNode, uploadNode, inputNode, sendNode, onClick } = detailProps;
 
-    return <div style={{margin: '8px 16px', display: 'flex', flexDirection:'row',
-      alignItems: 'flex-end', borderRadius: 16,padding: 10, border: '1px solid var(--semi-color-border)'}}
-                onClick={onClick}
+    return <div style={{
+      margin: '8px 16px', display: 'flex', flexDirection: 'row',
+      alignItems: 'flex-end', borderRadius: 16, padding: 10, border: '1px solid var(--semi-color-border)'
+    }}
+      onClick={onClick}
     >
       {/*{uploadNode}*/}
       {inputNode}
@@ -309,15 +314,15 @@ const Playground = () => {
   }, []);
 
   return (
-    <Layout style={{height: '100%'}}>
+    <Layout style={{ height: '100%' }}>
       {(showSettings || !styleState.isMobile) && (
         <Layout.Sider style={{ display: styleState.isMobile ? 'block' : 'initial' }}>
           <Card style={commonOuterStyle}>
             <div style={{ marginTop: 10 }}>
-              <Typography.Text strong>分组：</Typography.Text>
+              <Typography.Text strong>{t('分组')}：</Typography.Text>
             </div>
             <Select
-              placeholder={'请选择分组'}
+              placeholder={t('请选择分组')}
               name='group'
               required
               selection
@@ -334,10 +339,10 @@ const Playground = () => {
               }))}
             />
             <div style={{ marginTop: 10 }}>
-              <Typography.Text strong>模型：</Typography.Text>
+              <Typography.Text strong>{t('模型')}：</Typography.Text>
             </div>
             <Select
-              placeholder={'请选择模型'}
+              placeholder={t('请选择模型')}
               name='model'
               required
               selection
@@ -397,7 +402,7 @@ const Playground = () => {
         </Layout.Sider>
       )}
       <Layout.Content>
-        <div style={{height: '100%', position: 'relative'}}>
+        <div style={{ height: '100%', position: 'relative' }}>
           <SettingsToggle />
           <Chat
             chatBoxRenderConfig={{

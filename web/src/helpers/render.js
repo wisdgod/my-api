@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { Tag } from '@douyinfe/semi-ui';
 
 export function renderText(text, limit) {
@@ -16,7 +17,7 @@ export function renderGroup(group) {
   if (group === '') {
     return (
       <Tag size='large' key='default' color='orange'>
-        用户分组
+        {i18next.t('用户分组')}
       </Tag>
     );
   }
@@ -146,7 +147,11 @@ export function renderModelPrice(
 ) {
   // 1 ratio = $0.002 / 1K tokens
   if (modelPrice !== -1) {
-    return '模型价格：$' + modelPrice + ' * 分组倍率：' + groupRatio + ' = $' + modelPrice * groupRatio;
+    return i18next.t('模型价格：${{price}} * 分组倍率：{{ratio}} = ${{total}}', {
+      price: modelPrice,
+      ratio: groupRatio,
+      total: modelPrice * groupRatio
+    });
   } else {
     if (completionRatio === undefined) {
       completionRatio = 0;
@@ -160,15 +165,28 @@ export function renderModelPrice(
     return (
       <>
         <article>
-          <p>提示：${inputRatioPrice} * {groupRatio} = ${inputRatioPrice * groupRatio} / 1M tokens</p>
-          <p>补全：${completionRatioPrice} * {groupRatio} = ${completionRatioPrice * groupRatio} / 1M tokens</p>
+          <p>{i18next.t('提示：${{price}} * {{ratio}} = ${{total}} / 1M tokens', {
+            price: inputRatioPrice,
+            ratio: groupRatio,
+            total: inputRatioPrice * groupRatio
+          })}</p>
+          <p>{i18next.t('补全：${{price}} * {{ratio}} = ${{total}} / 1M tokens', {
+            price: completionRatioPrice,
+            ratio: groupRatio,
+            total: completionRatioPrice * groupRatio
+          })}</p>
           <p></p>
           <p>
-            提示 {inputTokens} tokens / 1M tokens * ${inputRatioPrice} + 补全{' '}
-            {completionTokens} tokens / 1M tokens * ${completionRatioPrice} * 分组 {groupRatio} =
-            ${price.toFixed(6)}
+            {i18next.t('提示 {{input}} tokens / 1M tokens * ${{price}} + 补全 {{completion}} tokens / 1M tokens * ${{compPrice}} * 分组 {{ratio}} = ${{total}}', {
+              input: inputTokens,
+              price: inputRatioPrice,
+              completion: completionTokens,
+              compPrice: completionRatioPrice,
+              ratio: groupRatio,
+              total: price.toFixed(6)
+            })}
           </p>
-          <p>仅供参考，以实际扣费为准</p>
+          <p>{i18next.t('仅供参考，以实际扣费为准')}</p>
         </article>
       </>
     );
@@ -182,9 +200,15 @@ export function renderModelPriceSimple(
 ) {
   // 1 ratio = $0.002 / 1K tokens
   if (modelPrice !== -1) {
-    return '价格：$' + modelPrice + ' * 分组：' + groupRatio;
+    return i18next.t('价格：${{price}} * 分组：{{ratio}}', {
+      price: modelPrice,
+      ratio: groupRatio
+    });
   } else {
-    return '模型: ' + modelRatio + ' * 分组: ' + groupRatio;
+    return i18next.t('模型: {{ratio}} * 分组: {{groupRatio}}', {
+      ratio: modelRatio,
+      groupRatio: groupRatio
+    });
   }
 }
 
@@ -224,8 +248,12 @@ export function renderAudioModelPrice(
           <p>音频补全：${inputRatioPrice} * {groupRatio} * {audioRatio} * {audioCompletionRatio} = ${inputRatioPrice * audioRatio * audioCompletionRatio * groupRatio} / 1M tokens</p>
           <p></p>
           <p>
-            提示 {inputTokens} tokens / 1M tokens * ${inputRatioPrice} + 补全{' '}
-            {completionTokens} tokens / 1M tokens * ${completionRatioPrice} +
+            {i18next.t('提示 {{input}} tokens / 1M tokens * ${{price}} + 补全 {{completion}} tokens / 1M tokens * ${{compPrice}} +', {
+              input: inputTokens,
+              price: inputRatioPrice,
+              completion: completionTokens,
+              compPrice: completionRatioPrice
+            })}
           </p>
           <p>
             音频提示 {audioInputTokens} tokens / 1M tokens * ${inputRatioPrice} * {audioRatio} + 音频补全 {audioCompletionTokens} tokens / 1M tokens * ${inputRatioPrice} * {audioRatio} * {audioCompletionRatio}
@@ -245,7 +273,7 @@ export function renderQuotaWithPrompt(quota, digits) {
   let displayInCurrency = localStorage.getItem('display_in_currency');
   displayInCurrency = displayInCurrency === 'true';
   if (displayInCurrency) {
-    return `（等价金额：${renderQuota(quota, digits)}）`;
+    return '|' + i18next.t('等价金额') + ': ' + renderQuota(quota, digits) + '';
   }
   return '';
 }
@@ -271,7 +299,7 @@ const colors = [
 // 基础10色色板 (N ≤ 10)
 const baseColors = [
   '#1664FF', // 主色
-  '#1AC6FF', 
+  '#1AC6FF',
   '#FF8A00',
   '#3CC780',
   '#7442D4',
