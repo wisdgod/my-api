@@ -169,7 +169,7 @@ func updateSunoTaskAll(ctx context.Context, channelId int, taskIds []string, tas
 				}
 			}
 		}
-		if responseItem.Status == model.TaskStatusSuccess {
+		if responseItem.Status == string(model.TaskStatusSuccess) {
 			task.Progress = "100%"
 		}
 		task.Data = responseItem.Data
