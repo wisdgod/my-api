@@ -3,6 +3,7 @@ package baidu
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
@@ -10,8 +11,6 @@ import (
 	relaycommon "one-api/relay/common"
 	"one-api/relay/constant"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Adaptor struct {

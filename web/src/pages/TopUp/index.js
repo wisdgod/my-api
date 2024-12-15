@@ -97,7 +97,7 @@ const TopUp = () => {
       await getAmount();
     }
     if (topUpCount < minTopUp) {
-      showError(t('充值数量不能小于') + minTopUp);
+      showError('充值数量不能小于' + minTopUp);
       return;
     }
     setOpen(false);
@@ -195,7 +195,7 @@ const TopUp = () => {
           setAmount(parseFloat(data));
         } else {
           setAmount(0);
-          Toast.error({ content: t('错误：') + data, id: 'getAmount' });
+          Toast.error({ content: '错误：' + data, id: 'getAmount' });
           // setTopUpCount(parseInt(res.data.count));
           // setAmount(parseInt(data));
         }
@@ -228,9 +228,9 @@ const TopUp = () => {
             size={'small'}
             centered={true}
           >
-            <p>{t('充值数量')}: {topUpCount}</p>
-            <p>{t('实付金额')}: {renderAmount()}</p>
-            <p>{t('是否确认充值')}</p>
+            <p>{t('充值数量')}：{topUpCount}</p>
+            <p>{t('实付金额')}：{renderAmount()}</p>
+            <p>{t('是否确认充值？')}</p>
           </Modal>
           <div
             style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}
@@ -280,9 +280,7 @@ const TopUp = () => {
                     disabled={!enableOnlineTopUp}
                     field={'redemptionCount'}
                     label={t('实付金额：') + ' ' + renderAmount()}
-                    placeholder={
-                      t('充值数量，最低') + renderQuotaWithAmount(minTopUp)
-                    }
+                    placeholder={t('充值数量，最低 ') + renderQuotaWithAmount(minTopUp)}
                     name='redemptionCount'
                     type={'number'}
                     value={topUpCount}

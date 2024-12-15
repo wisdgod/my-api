@@ -9,7 +9,7 @@
 
 🍥新一代大模型网关与AI资产管理系统
 
-<a href="https://trendshift.io/repositories/8227" target="_blank"><img src="https://trendshift.io/api/badge/repositories/8227" alt="Calcium-Ion%2Fnew-api | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+<a href="https://trendshift.io/repositories/8227" target="_blank"><img src="https://trendshift.io/api/badge/repositories/8227" alt="wisdgod%2Fmy-api | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 <p align="center">
   <a href="https://raw.githubusercontent.com/Calcium-Ion/new-api/main/LICENSE">
@@ -34,7 +34,6 @@
 
 > [!NOTE]
 > 本项目为开源项目，在 [One API](https://github.com/songquanpeng/one-api) 和 [New API](https://github.com/Calcium-Ion/new-api) 的基础上进行二次开发
-
 > [!IMPORTANT]
 > - 使用者必须在遵循 OpenAI 的[使用条款](https://openai.com/policies/terms-of-use)以及**法律法规**的情况下使用，不得用于非法用途。
 > - 本项目仅供个人学习使用，不保证稳定性，且不提供任何技术支持。
@@ -98,11 +97,11 @@
 - 本地数据库（默认）：SQLite（Docker 部署默认使用 SQLite，必须挂载 `/data` 目录到宿主机）
 - 远程数据库：MySQL 版本 >= 5.7.8，PgSQL 版本 >= 9.6
 
-<!-- ### 使用宝塔面板Docker功能部署
+### 使用宝塔面板Docker功能部署
 安装宝塔面板 (**9.2.0版本**及以上)，前往 [宝塔面板](https://www.bt.cn/new/download.html) 官网，选择正式版的脚本下载安装  
 安装后登录宝塔面板，在菜单栏中点击 Docker ，首次进入会提示安装 Docker 服务，点击立即安装，按提示完成安装  
-安装完成后在应用商店中找到 **New-API** ，点击安装，配置基本选项 即可完成安装  
-[图文教程](BT.md) -->
+安装完成后在应用商店中找到 **My-API** ，点击安装，配置基本选项 即可完成安装  
+[图文教程](BT.md)
 
 ### 基于 Docker 进行部署
 ### 使用 Docker Compose 部署（推荐）
@@ -122,16 +121,6 @@ docker run --name my-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v
 # 使用 MySQL 的部署命令，在上面的基础上添加 `-e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi"`，请自行修改数据库连接参数。
 # 例如：
 docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" -e TZ=Asia/Shanghai -v /home/ubuntu/data/my-api:/data wisdgod/my-api:latest
-```
-### 使用宝塔面板Docker功能部署
-```shell
-# 使用 SQLite 的部署命令：
-docker run --name my-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /www/wwwroot/my-api:/data wisdgod/my-api:latest
-# 使用 MySQL 的部署命令，在上面的基础上添加 `-e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi"`，请自行修改数据库连接参数。
-# 例如：
-# 注意：数据库要开启远程访问，并且只允许服务器IP访问
-docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(宝塔的服务器地址:宝塔数据库端口)/宝塔数据库名称" -e TZ=Asia/Shanghai -v /www/wwwroot/my-api:/data wisdgod/my-api:latest
-# 注意：数据库要开启远程访问，并且只允许服务器IP访问
 ```
 
 ## 渠道重试

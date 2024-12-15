@@ -115,7 +115,7 @@ func difyStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Re
 	return nil, usage
 }
 
-func difyHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
+func difyHandler(c *gin.Context, resp *http.Response, _ *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
 	var difyResponse DifyChatCompletionResponse
 	responseBody, err := io.ReadAll(resp.Body)
 
@@ -152,6 +152,6 @@ func difyHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInf
 	}
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(resp.StatusCode)
-	_, err = c.Writer.Write(jsonResponse)
+	c.Writer.Write(jsonResponse)
 	return nil, &difyResponse.MetaData.Usage
 }

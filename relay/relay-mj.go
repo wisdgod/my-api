@@ -626,12 +626,6 @@ func RelayMidjourneySubmit(c *gin.Context, relayMode int) *dto.MidjourneyRespons
 	return nil
 }
 
-// type taskChangeParams struct {
-// 	ID     string
-// 	Action string
-// 	Index  int
-// }
-
 func getMjRequestPath(path string) string {
 	requestURL := path
 	if strings.Contains(requestURL, "/mj-") {

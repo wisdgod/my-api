@@ -69,6 +69,7 @@ export default function SettingsDrawing(props) {
     refForm.current.setValues(currentInputs);
     localStorage.setItem('mj_notify_enabled', String(inputs.MjNotifyEnabled));
   }, [props.options]);
+
   return (
     <>
       <Spin spinning={loading}>

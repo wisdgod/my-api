@@ -2,6 +2,7 @@ package ollama
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
@@ -9,8 +10,6 @@ import (
 	"one-api/relay/channel/openai"
 	relaycommon "one-api/relay/common"
 	relayconstant "one-api/relay/constant"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Adaptor struct {

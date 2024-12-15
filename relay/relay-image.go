@@ -150,6 +150,7 @@ func ImageHelper(c *gin.Context, relayMode int) *dto.OpenAIErrorWithStatusCode {
 	requestBody = bytes.NewBuffer(jsonData)
 
 	statusCodeMappingStr := c.GetString("status_code_mapping")
+
 	resp, err := adaptor.DoRequest(c, relayInfo, requestBody)
 	if err != nil {
 		return service.OpenAIErrorWrapper(err, "do_request_failed", http.StatusInternalServerError)

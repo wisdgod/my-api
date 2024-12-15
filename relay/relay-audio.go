@@ -42,6 +42,7 @@ func getAndValidAudioRequest(c *gin.Context, info *relaycommon.RelayInfo) (*dto.
 		if audioRequest.Model == "" {
 			audioRequest.Model = formData.Get("model")
 		}
+
 		if audioRequest.Model == "" {
 			return nil, errors.New("model is required")
 		}

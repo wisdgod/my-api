@@ -13,8 +13,6 @@ import (
 	relaycommon "one-api/relay/common"
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
-	"regexp"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -24,7 +22,27 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+func sendStreamData(c *gin.Context, data string, forceFormat bool) error {
+	if data == "" {
+		return nil
+	}
+
+	if forceFormat {
+		var lastStreamResponse dto.ChatCompletionsStreamResponse
+		if err := json.Unmarshal(common.StringToByteSlice(data), &lastStreamResponse); err != nil {
+			return err
+		}
+		return service.ObjectData(c, lastStreamResponse)
+	}
+	return service.StringData(c, data)
+}
+
 func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
+	if resp == nil || resp.Body == nil {
+		common.LogError(c, "invalid response or response body")
+		return service.OpenAIErrorWrapper(fmt.Errorf("invalid response"), "invalid_response", http.StatusInternalServerError), nil
+	}
+
 	containStreamUsage := false
 	var responseId string
 	var createAt int64 = 0
@@ -34,6 +52,13 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 	var responseTextBuilder strings.Builder
 	var usage = &dto.Usage{}
 	var streamItems []string // store stream items
+	var forceFormat bool
+
+	if info.ChannelType == common.ChannelTypeCustom {
+		if forceFmt, ok := info.ChannelSetting["force_format"].(bool); ok {
+			forceFormat = forceFmt
+		}
+	}
 
 	toolCount := 0
 	scanner := bufio.NewScanner(resp.Body)
@@ -63,9 +88,9 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 			}
 			mu.Lock()
 			data = data[6:]
-			if !strings.HasPrefix(data, "[DONE]") && !strings.Contains(data, "\",\"created\":1234567890,\"model\":\"\",\"") {
+			if !strings.HasPrefix(data, "[DONE]") {
 				if lastStreamData != "" {
-					err := service.StringData(c, lastStreamData)
+					err := sendStreamData(c, lastStreamData, forceFormat)
 					if err != nil {
 						common.LogError(c, "streaming error: "+err.Error())
 					}
@@ -108,7 +133,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 		}
 	}
 	if shouldSendLastResp {
-		service.StringData(c, lastStreamData)
+		sendStreamData(c, lastStreamData, forceFormat)
 	}
 
 	// 计算token
@@ -203,7 +228,7 @@ func OaiStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rel
 }
 
 func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model string) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
-	// 读取响应体
+	var simpleResponse dto.SimpleResponse
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return service.OpenAIErrorWrapper(err, "read_response_body_failed", http.StatusInternalServerError), nil
@@ -212,115 +237,22 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 	if err != nil {
 		return service.OpenAIErrorWrapper(err, "close_response_body_failed", http.StatusInternalServerError), nil
 	}
-
-	// 重置响应体
-	resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
-
-	// 检查是否有错误信息
-	var openAIError dto.OpenAIError
-	err = json.Unmarshal(responseBody, &openAIError)
-	if err == nil && openAIError.Type != "" {
+	err = json.Unmarshal(responseBody, &simpleResponse)
+	if err != nil {
+		return service.OpenAIErrorWrapper(err, "unmarshal_response_body_failed", http.StatusInternalServerError), nil
+	}
+	if simpleResponse.Error.Type != "" {
 		return &dto.OpenAIErrorWithStatusCode{
-			Error:      openAIError,
+			Error:      simpleResponse.Error,
 			StatusCode: resp.StatusCode,
 		}, nil
 	}
-
-	// 从上下文中获取 response_mapping 字符串
-	responseMappingStr := c.GetString("response_mapping")
-	// 初始化一个 mapping 用于存储替换规则
-	var responseMapping map[string]string
-	// 检查 responseMappingStr 是否为空
-	if strings.TrimSpace(responseMappingStr) != "" {
-		// 尝试解析 JSON 字符串
-		err := json.Unmarshal([]byte(responseMappingStr), &responseMapping)
-		if err != nil {
-			// 如果解析失败，不进行替换操作，避免程序崩溃
-			responseMapping = nil
-		}
-	}
-
-	// 标记是否进行了替换操作
-	bodyModified := false
-
-	// 如果有有效的替换规则，进行内容替换
-	if responseMapping != nil {
-		// 使用通用的 map 来解析响应，避免信息丢失
-		var responseMap map[string]interface{}
-		err := json.Unmarshal(responseBody, &responseMap)
-		if err == nil {
-			// 处理 choices 中的内容
-			if choices, ok := responseMap["choices"].([]interface{}); ok {
-				for _, choice := range choices {
-					if choiceMap, ok := choice.(map[string]interface{}); ok {
-						// 处理 message.content
-						if message, ok := choiceMap["message"].(map[string]interface{}); ok {
-							if content, ok := message["content"].(string); ok {
-								originalContent := content
-								// 遍历替换规则，进行逐一替换
-								for pattern, replacement := range responseMapping {
-									// 尝试从缓存中获取已编译的正则表达式
-									var re *regexp.Regexp
-									if cachedRe, ok := common.RegexCache.Load(pattern); ok {
-										re = cachedRe.(*regexp.Regexp)
-									} else {
-										// 编译新的正则表达式并存入缓存
-										var err error
-										re, err = regexp.Compile(pattern)
-										if err != nil {
-											// 编译失败，跳过该规则
-											continue
-										}
-										common.RegexCache.Store(pattern, re)
-									}
-									content = re.ReplaceAllString(content, replacement)
-								}
-								// 如果内容发生了变化，标记为已修改
-								if content != originalContent {
-									bodyModified = true
-								}
-								// 更新替换后的内容
-								message["content"] = content
-							}
-						}
-					}
-				}
-			}
-			// 在重新序列化响应内容后，添加换行符
-			filteredResponseBody, err := json.Marshal(responseMap)
-			if err == nil {
-				// 添加换行符
-				filteredResponseBody = append(filteredResponseBody, '\n')
-				// 重置 response body
-				resp.Body = io.NopCloser(bytes.NewBuffer(filteredResponseBody))
-				// 如果内容被修改，更新 responseBody 变量
-				if bodyModified {
-					responseBody = filteredResponseBody
-				}
-			} else {
-				// 如果序列化失败，保持原始响应内容
-				resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
-			}
-		} else {
-			// 如果解析失败，保持原始响应内容
-			resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
-		}
-	} else {
-		// 如果没有有效的替换规则，保持原始响应内容
-		resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
-	}
-
-	// 如果响应体被修改，更新 Content-Length 头部
-	if bodyModified {
-		// 获取新的内容长度
-		newContentLength := strconv.Itoa(len(responseBody))
-		// 更新响应头中的 Content-Length
-		resp.Header.Set("Content-Length", newContentLength)
-	}
-
-	// 我们不应该在解析响应体之前设置响应头，因为解析部分可能失败，
-	// 这样我们将不得不发送错误响应，但此时，响应头已经设置，
-	// 这会让 httpClient 感到困惑，例如 Postman 会报告错误，我们无法查看响应内容。
+	// Reset response body
+	resp.Body = io.NopCloser(bytes.NewBuffer(responseBody))
+	// We shouldn't set the header before we parse the response body, because the parse part may fail.
+	// And then we will have to send an error response, but in this case, the header has already been set.
+	// So the httpClient will be confused by the response.
+	// For example, Postman will report error, and we cannot check the response at all.
 	for k, v := range resp.Header {
 		c.Writer.Header().Set(k, v[0])
 	}
@@ -330,44 +262,19 @@ func OpenaiHandler(c *gin.Context, resp *http.Response, promptTokens int, model 
 		return service.OpenAIErrorWrapper(err, "copy_response_body_failed", http.StatusInternalServerError), nil
 	}
 	resp.Body.Close()
-
-	// 解析 usage 信息
-	var usage dto.Usage
-	var responseMap map[string]interface{}
-	err = json.Unmarshal(responseBody, &responseMap)
-	if err == nil {
-		if usageMap, ok := responseMap["usage"].(map[string]interface{}); ok {
-			usage.PromptTokens = int(usageMap["prompt_tokens"].(float64))
-			usage.CompletionTokens = int(usageMap["completion_tokens"].(float64))
-			usage.TotalTokens = int(usageMap["total_tokens"].(float64))
-		} else {
-			// 如果没有 usage 信息，手动计算 completionTokens
-			usage.PromptTokens = promptTokens
-			usage.CompletionTokens = 0
-			if choices, ok := responseMap["choices"].([]interface{}); ok {
-				for _, choice := range choices {
-					if choiceMap, ok := choice.(map[string]interface{}); ok {
-						// 处理 message.content
-						if message, ok := choiceMap["message"].(map[string]interface{}); ok {
-							if content, ok := message["content"].(string); ok {
-								ctkm, _ := service.CountTextToken(content, model)
-								usage.CompletionTokens += ctkm
-							}
-						}
-					}
-				}
-			}
-			usage.TotalTokens = usage.PromptTokens + usage.CompletionTokens
+	if simpleResponse.Usage.TotalTokens == 0 || (simpleResponse.Usage.PromptTokens == 0 && simpleResponse.Usage.CompletionTokens == 0) {
+		completionTokens := 0
+		for _, choice := range simpleResponse.Choices {
+			ctkm, _ := service.CountTextToken(string(choice.Message.Content), model)
+			completionTokens += ctkm
 		}
-	} else {
-		// 如果解析失败，仍然返回初始的 usage
-		usage = dto.Usage{
-			PromptTokens: promptTokens,
-			TotalTokens:  promptTokens,
+		simpleResponse.Usage = dto.Usage{
+			PromptTokens:     promptTokens,
+			CompletionTokens: completionTokens,
+			TotalTokens:      promptTokens + completionTokens,
 		}
 	}
-
-	return nil, &usage
+	return nil, &simpleResponse.Usage
 }
 
 func OpenaiTTSHandler(c *gin.Context, resp *http.Response, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
@@ -496,6 +403,10 @@ func getTextFromJSON(body []byte) (string, error) {
 }
 
 func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.OpenAIErrorWithStatusCode, *dto.RealtimeUsage) {
+	if info == nil || info.ClientWs == nil || info.TargetWs == nil {
+		return service.OpenAIErrorWrapper(fmt.Errorf("invalid websocket connection"), "invalid_connection", http.StatusBadRequest), nil
+	}
+
 	info.IsStream = true
 	clientConn := info.ClientWs
 	targetConn := info.TargetWs
@@ -511,6 +422,11 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 	sumUsage := &dto.RealtimeUsage{}
 
 	gopool.Go(func() {
+		defer func() {
+			if r := recover(); r != nil {
+				errChan <- fmt.Errorf("panic in client reader: %v", r)
+			}
+		}()
 		for {
 			select {
 			case <-c.Done():
@@ -566,6 +482,11 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 	})
 
 	gopool.Go(func() {
+		defer func() {
+			if r := recover(); r != nil {
+				errChan <- fmt.Errorf("panic in target reader: %v", r)
+			}
+		}()
 		for {
 			select {
 			case <-c.Done():
@@ -689,6 +610,10 @@ func OpenaiRealtimeHandler(c *gin.Context, info *relaycommon.RelayInfo) (*dto.Op
 }
 
 func preConsumeUsage(ctx *gin.Context, info *relaycommon.RelayInfo, usage *dto.RealtimeUsage, totalUsage *dto.RealtimeUsage) error {
+	if usage == nil || totalUsage == nil {
+		return fmt.Errorf("invalid usage pointer")
+	}
+
 	totalUsage.TotalTokens += usage.TotalTokens
 	totalUsage.InputTokens += usage.InputTokens
 	totalUsage.OutputTokens += usage.OutputTokens

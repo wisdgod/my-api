@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, Col, Form, Row, Spin, Tag } from '@douyinfe/semi-ui';
+import { Button, Col, Form, Row, Spin } from '@douyinfe/semi-ui';
 import {
   compareObjects,
   API,
@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function DataDashboard(props) {
   const { t } = useTranslation();
+  
   const optionsDataExportDefaultTime = [
     { key: 'hour', label: t('小时'), value: 'hour' },
     { key: 'day', label: t('天'), value: 'day' },

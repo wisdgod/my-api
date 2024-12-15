@@ -3,11 +3,10 @@ package model
 import (
 	"errors"
 	"fmt"
-	"one-api/common"
-	"strings"
-
 	"github.com/samber/lo"
 	"gorm.io/gorm"
+	"one-api/common"
+	"strings"
 )
 
 type Ability struct {

@@ -11,22 +11,16 @@ type TopUp struct {
 }
 
 func (topUp *TopUp) Insert() error {
-	var err error
-	err = DB.Create(topUp).Error
-	return err
+	return DB.Create(topUp).Error
 }
 
 func (topUp *TopUp) Update() error {
-	var err error
-	err = DB.Save(topUp).Error
-	return err
+	return DB.Save(topUp).Error
 }
 
 func GetTopUpById(id int) *TopUp {
 	var topUp *TopUp
-	var err error
-	err = DB.Where("id = ?", id).First(&topUp).Error
-	if err != nil {
+	if err := DB.Where("id = ?", id).First(&topUp).Error; err != nil {
 		return nil
 	}
 	return topUp
@@ -34,9 +28,7 @@ func GetTopUpById(id int) *TopUp {
 
 func GetTopUpByTradeNo(tradeNo string) *TopUp {
 	var topUp *TopUp
-	var err error
-	err = DB.Where("trade_no = ?", tradeNo).First(&topUp).Error
-	if err != nil {
+	if err := DB.Where("trade_no = ?", tradeNo).First(&topUp).Error; err != nil {
 		return nil
 	}
 	return topUp

@@ -10,11 +10,13 @@ import {
   Space,
   Table,
   Tag,
+  Tooltip,
   Popover,
   ImagePreview,
   Button,
 } from '@douyinfe/semi-ui';
 import {
+  IconMore,
   IconVerify,
   IconUploadError,
   IconHelpCircle,
@@ -32,12 +34,12 @@ const ModelPricing = () => {
   const [selectedGroup, setSelectedGroup] = useState('default');
 
   const rowSelection = useMemo(
-    () => ({
-      onChange: (selectedRowKeys, selectedRows) => {
-        setSelectedRowKeys(selectedRowKeys);
-      },
-    }),
-    []
+      () => ({
+          onChange: (selectedRowKeys, selectedRows) => {
+            setSelectedRowKeys(selectedRowKeys);
+          },
+      }),
+      []
   );
 
   const handleChange = (value) => {
@@ -57,7 +59,7 @@ const ModelPricing = () => {
     const newFilteredValue = value ? [value] : [];
     setFilteredValue(newFilteredValue);
   };
-
+  
   function renderQuotaType(type) {
     // Ensure all cases are string literals by adding quotes.
     switch (type) {
@@ -77,41 +79,41 @@ const ModelPricing = () => {
         return t('未知');
     }
   }
-
+  
   function renderAvailable(available) {
     return available ? (
       <Popover
-        content={
-          <div style={{ padding: 8 }}>{t('您的分组可以使用该模型')}</div>
-        }
-        position='top'
-        key={available}
-        style={{
-          backgroundColor: 'rgba(var(--semi-blue-4),1)',
-          borderColor: 'rgba(var(--semi-blue-4),1)',
-          color: 'var(--semi-color-white)',
-          borderWidth: 1,
-          borderStyle: 'solid',
-        }}
+          content={
+            <div style={{ padding: 8 }}>{t('您的分组可以使用该模型')}</div>
+          }
+          position='top'
+          key={available}
+          style={{
+              backgroundColor: 'rgba(var(--semi-blue-4),1)',
+              borderColor: 'rgba(var(--semi-blue-4),1)',
+              color: 'var(--semi-color-white)',
+              borderWidth: 1,
+              borderStyle: 'solid',
+          }}
       >
-        <IconVerify style={{ color: 'green' }} size="large" />
+          <IconVerify style={{ color: 'green' }}  size="large" />
       </Popover>
     ) : (
       <Popover
-        content={
-          <div style={{ padding: 8 }}>{t('您的分组无权使用该模型')}</div>
-        }
-        position='top'
-        key={available}
-        style={{
-          backgroundColor: 'rgba(var(--semi-blue-4),1)',
-          borderColor: 'rgba(var(--semi-blue-4),1)',
-          color: 'var(--semi-color-white)',
-          borderWidth: 1,
-          borderStyle: 'solid',
-        }}
+          content={
+            <div style={{ padding: 8 }}>{t('您的分组无权使用该模型')}</div>
+          }
+          position='top'
+          key={available}
+          style={{
+              backgroundColor: 'rgba(var(--semi-blue-4),1)',
+              borderColor: 'rgba(var(--semi-blue-4),1)',
+              color: 'var(--semi-color-white)',
+              borderWidth: 1,
+              borderStyle: 'solid',
+          }}
       >
-        <IconUploadError style={{ color: '#FFA54F' }} size="large" />
+          <IconUploadError style={{ color: '#FFA54F' }}  size="large" />
       </Popover>
     );
   }
@@ -121,7 +123,7 @@ const ModelPricing = () => {
       title: t('可用性'),
       dataIndex: 'available',
       render: (text, record, index) => {
-        // if record.enable_groups contains selectedGroup, then available is true
+         // if record.enable_groups contains selectedGroup, then available is true
         return renderAvailable(record.enable_groups.includes(selectedGroup));
       },
       sorter: (a, b) => a.available - b.available,
@@ -198,22 +200,22 @@ const ModelPricing = () => {
     },
     {
       title: () => (
-        <span style={{ 'display': 'flex', 'alignItems': 'center' }}>
+        <span style={{'display':'flex','alignItems':'center'}}>
           {t('倍率')}
           <Popover
             content={
               <div style={{ padding: 8 }}>
-                {t('倍率是为了方便换算不同价格的模型')}<br />
+                {t('倍率是为了方便换算不同价格的模型')}<br/>
                 {t('点击查看倍率说明')}
               </div>
             }
             position='top'
             style={{
-              backgroundColor: 'rgba(var(--semi-blue-4),1)',
-              borderColor: 'rgba(var(--semi-blue-4),1)',
-              color: 'var(--semi-color-white)',
-              borderWidth: 1,
-              borderStyle: 'solid',
+                backgroundColor: 'rgba(var(--semi-blue-4),1)',
+                borderColor: 'rgba(var(--semi-blue-4),1)',
+                color: 'var(--semi-color-white)',
+                borderWidth: 1,
+                borderStyle: 'solid',
             }}
           >
             <IconHelpCircle
@@ -358,14 +360,14 @@ const ModelPricing = () => {
             })}
           />
         )}
-        <br />
-        <Banner
-          type="info"
-          fullMode={false}
-          description={<div>{t('按量计费费用 = 分组倍率 × 模型倍率 × （提示token数 + 补全token数 × 补全倍率）/ 500000 （单位：美元）')}</div>}
-          closeIcon="null"
+        <br/>
+        <Banner 
+            type="info"
+            fullMode={false}
+            description={<div>{t('按量计费费用 = 分组倍率 × 模型倍率 × （提示token数 + 补全token数 × 补全倍率）/ 500000 （单位：美元）')}</div>}
+            closeIcon="null"
         />
-        <br />
+        <br/>
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder={t('模糊搜索模型名称')}
@@ -378,7 +380,7 @@ const ModelPricing = () => {
           <Button
             theme='light'
             type='tertiary'
-            style={{ width: 150 }}
+            style={{width: 150}}
             onClick={() => {
               copyText(selectedRowKeys);
             }}

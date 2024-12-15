@@ -1,12 +1,12 @@
 <div align="center">
 
-![new-api](/web/public/logo.png)
+![my-api](/web/public/logo.svg)
 
-# New API
+# My API
 
 🍥 Next Generation LLM Gateway and AI Asset Management System
 
-<a href="https://trendshift.io/repositories/8227" target="_blank"><img src="https://trendshift.io/api/badge/repositories/8227" alt="Calcium-Ion%2Fnew-api | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+<a href="https://trendshift.io/repositories/8227" target="_blank"><img src="https://trendshift.io/api/badge/repositories/8227" alt="wisdgod%2Fmy-api | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 <p align="center">
   <a href="https://raw.githubusercontent.com/Calcium-Ion/new-api/main/LICENSE">
@@ -84,7 +84,7 @@ You can add custom models gpt-4-gizmo-* in channels. These are third-party model
 
 ## Deployment
 > [!TIP]
-> Latest Docker image: `calciumion/new-api:latest`  
+> Latest Docker image: `wisdgod/my-api:latest`  
 > Default account: root, password: 123456  
 > Update command:
 > ```
@@ -99,8 +99,8 @@ You can add custom models gpt-4-gizmo-* in channels. These are third-party model
 ### Using Docker Compose (Recommended)
 ```shell
 # Clone project
-git clone https://github.com/Calcium-Ion/new-api.git
-cd new-api
+git clone https://github.com/wisdgod/my-api.git
+cd my-api
 # Edit docker-compose.yml as needed
 # Start
 docker-compose up -d
@@ -109,10 +109,10 @@ docker-compose up -d
 ### Direct Docker Image Usage
 ```shell
 # SQLite deployment:
-docker run --name new-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /home/ubuntu/data/new-api:/data calciumion/new-api:latest
+docker run --name my-api -d --restart always -p 3000:3000 -e TZ=Asia/Shanghai -v /home/ubuntu/data/my-api:/data wisdgod/my-api:latest
 # MySQL deployment (add -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi"), modify database connection parameters as needed
 # Example:
-docker run --name new-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" -e TZ=Asia/Shanghai -v /home/ubuntu/data/new-api:/data calciumion/new-api:latest
+docker run --name my-api -d --restart always -p 3000:3000 -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" -e TZ=Asia/Shanghai -v /home/ubuntu/data/my-api:/data wisdgod/my-api:latest
 ```
 
 ## Channel Retry

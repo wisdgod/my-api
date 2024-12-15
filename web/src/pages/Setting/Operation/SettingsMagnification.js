@@ -60,6 +60,7 @@ export default function SettingsMagnification(props) {
           })
           .catch(error => {
             console.error('Unexpected error in Promise.all:', error);
+
             showError('保存失败，请重试');
           })
           .finally(() => {

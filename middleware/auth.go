@@ -66,8 +66,8 @@ func authHelper(c *gin.Context, minRole int) {
 		}
 	}
 	if !useAccessToken {
-		// get header My-Api-User
-		apiUserIdStr := c.Request.Header.Get("My-Api-User")
+		// get header My-API-User
+		apiUserIdStr := c.Request.Header.Get("My-API-User")
 		if apiUserIdStr == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"success": false,

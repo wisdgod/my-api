@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   API,
@@ -7,7 +8,7 @@ import {
   showError,
   showSuccess,
 } from '../../helpers';
-import { renderQuota, renderQuotaWithPrompt } from '../../helpers/render';
+import { getQuotaPerUnit, renderQuota, renderQuotaWithPrompt } from '../../helpers/render';
 import {
   AutoComplete,
   Button,
@@ -22,10 +23,12 @@ import Title from '@douyinfe/semi-ui/lib/es/typography/title';
 import { Divider } from 'semantic-ui-react';
 
 const EditRedemption = (props) => {
+  const { t } = useTranslation();
   const isEdit = props.editingRedemption.id !== undefined;
   const [loading, setLoading] = useState(isEdit);
 
-  const { t } = useTranslation();
+  const params = useParams();
+  const navigate = useNavigate();
   const originInputs = {
     name: '',
     quota: 100000,

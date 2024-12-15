@@ -1,11 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/User';
 import { StatusContext } from '../context/Status';
 import { useTranslation } from 'react-i18next';
 
 import {
   API,
+  getLogo,
+  getSystemName,
   isAdmin,
+  isMobile,
   showError,
 } from '../helpers';
 import '../index.css';
@@ -14,16 +18,19 @@ import {
   IconCalendarClock, IconChecklistStroked,
   IconComment, IconCommentStroked,
   IconCreditCard,
-  IconGift, 
+  IconGift, IconHelpCircle,
   IconHistogram,
+  IconHome,
   IconImage,
   IconKey,
   IconLayers,
+  IconPriceTag,
   IconSetting,
   IconUser
 } from '@douyinfe/semi-icons';
-import { Nav } from '@douyinfe/semi-ui';
+import { Avatar, Dropdown, Layout, Nav, Switch } from '@douyinfe/semi-ui';
 import { setStatusData } from '../helpers/data.js';
+import { stringToColor } from '../helpers/render.js';
 import { useSetTheme, useTheme } from '../context/Theme/index.js';
 import { StyleContext } from '../context/Style/index.js';
 
@@ -139,9 +146,9 @@ const SiderBar = () => {
         to: '/task',
         icon: <IconChecklistStroked />,
         className:
-          localStorage.getItem('enable_task') === 'true'
-            ? 'semi-navigation-item-normal'
-            : 'tableHiddle',
+            localStorage.getItem('enable_task') === 'true'
+                ? 'semi-navigation-item-normal'
+                : 'tableHiddle',
       },
       {
         text: t('设置'),
@@ -161,58 +168,42 @@ const SiderBar = () => {
     ],
   );
 
-  const loadStatus = async () => {
-    const res = await API.get('/api/status');
-    if (res === undefined) {
-      return;
-    }
-    const { success, data } = res.data;
-    if (success) {
-      statusDispatch({ type: 'set', payload: data });
-      setStatusData(data);
-    } else {
-      showError('无法正常连接至服务器！');
-    }
-  };
-
   useEffect(() => {
-    loadStatus().then(() => {
-      setIsCollapsed(
-        localStorage.getItem('default_collapse_sidebar') === 'true',
-      );
-    });
     let localKey = window.location.pathname.split('/')[1];
     if (localKey === '') {
       localKey = 'home';
     }
     setSelectedKeys([localKey]);
+    
     let chatLink = localStorage.getItem('chat_link');
     if (!chatLink) {
-      let chats = localStorage.getItem('chats');
-      if (chats) {
-        // console.log(chats);
-        try {
-          chats = JSON.parse(chats);
-          if (Array.isArray(chats)) {
-            let chatItems = [];
-            for (let i = 0; i < chats.length; i++) {
-              let chat = {};
-              for (let key in chats[i]) {
-                chat.text = key;
-                chat.itemKey = 'chat' + i;
-                chat.to = '/chat/' + i;
-              }
-              // setRouterMap({ ...routerMap, chat: '/chat/' + i })
-              chatItems.push(chat);
+        let chats = localStorage.getItem('chats');
+        if (chats) {
+            // console.log(chats);
+            try {
+                chats = JSON.parse(chats);
+                if (Array.isArray(chats)) {
+                    let chatItems = [];
+                    for (let i = 0; i < chats.length; i++) {
+                        let chat = {};
+                        for (let key in chats[i]) {
+                            chat.text = key;
+                            chat.itemKey = 'chat' + i;
+                            chat.to = '/chat/' + i;
+                        }
+                        // setRouterMap({ ...routerMap, chat: '/chat/' + i })
+                        chatItems.push(chat);
+                    }
+                    setChatItems(chatItems);
+                }
+            } catch (e) {
+                console.error(e);
+                showError('聊天数据解析失败')
             }
-            setChatItems(chatItems);
-          }
-        } catch (e) {
-          console.error(e);
-          showError('聊天数据解析失败')
         }
-      }
     }
+    
+    setIsCollapsed(localStorage.getItem('default_collapse_sidebar') === 'true');
   }, []);
 
   return (
@@ -228,27 +219,27 @@ const SiderBar = () => {
         }}
         selectedKeys={selectedKeys}
         renderWrapper={({ itemElement, isSubNav, isInSubNav, props }) => {
-          let chatLink = localStorage.getItem('chat_link');
-          if (!chatLink) {
-            let chats = localStorage.getItem('chats');
-            if (chats) {
-              chats = JSON.parse(chats);
-              if (Array.isArray(chats) && chats.length > 0) {
-                for (let i = 0; i < chats.length; i++) {
-                  routerMap['chat' + i] = '/chat/' + i;
+            let chatLink = localStorage.getItem('chat_link');
+            if (!chatLink) {
+                let chats = localStorage.getItem('chats');
+                if (chats) {
+                    chats = JSON.parse(chats);
+                    if (Array.isArray(chats) && chats.length > 0) {
+                        for (let i = 0; i < chats.length; i++) {
+                            routerMap['chat' + i] = '/chat/' + i;
+                        }
+                        if (chats.length > 1) {
+                            // delete /chat
+                            if (routerMap['chat']) {
+                                delete routerMap['chat'];
+                            }
+                        } else {
+                            // rename /chat to /chat/0
+                            routerMap['chat'] = '/chat/0';
+                        }
+                    }
                 }
-                if (chats.length > 1) {
-                  // delete /chat
-                  if (routerMap['chat']) {
-                    delete routerMap['chat'];
-                  }
-                } else {
-                  // rename /chat to /chat/0
-                  routerMap['chat'] = '/chat/0';
-                }
-              }
             }
-          }
           return (
             <Link
               style={{ textDecoration: 'none' }}

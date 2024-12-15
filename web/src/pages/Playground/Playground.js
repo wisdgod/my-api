@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { UserContext } from '../../context/User/index.js';
 import { API, getUserIdFromLocalStorage, showError } from '../../helpers/index.js';
 import { Card, Chat, Input, Layout, Select, Slider, TextArea, Typography, Button } from '@douyinfe/semi-ui';
@@ -15,7 +15,7 @@ const roleInfo = {
   },
   assistant: {
     name: 'Assistant',
-    avatar: 'logo.png'
+    avatar: 'logo.svg'
   },
   system: {
     name: 'System',
@@ -30,7 +30,7 @@ function getId() {
 
 const Playground = () => {
   const { t } = useTranslation();
-
+  
   const defaultMessage = [
     {
       role: 'user',
@@ -97,32 +97,29 @@ const Playground = () => {
     let res = await API.get(`/api/user/self/groups`);
     const { success, message, data } = res.data;
     if (success) {
-      // return data is a map, key is group name, value is group description
-      // label is group description, value is group name
       let localGroupOptions = Object.keys(data).map((group) => ({
         label: data[group],
         value: group,
       }));
-      // handleInputChange('group', localGroupOptions[0].value);
 
-      if (localGroupOptions.length > 0) {
-        // set user group at first
-        if (userState.user && userState.user.group) {
-          let userGroup = userState.user.group;
-          // Find and move user's group to the front
+      if (localGroupOptions.length === 0) {
+        localGroupOptions = [{
+          label: t('用户分组'),
+          value: '',
+        }];
+      } else {
+        const localUser = JSON.parse(localStorage.getItem('user'));
+        const userGroup = (userState.user && userState.user.group) || (localUser && localUser.group);
+        
+        if (userGroup) {
           const userGroupIndex = localGroupOptions.findIndex(g => g.value === userGroup);
           if (userGroupIndex > -1) {
             const userGroupOption = localGroupOptions.splice(userGroupIndex, 1)[0];
             localGroupOptions.unshift(userGroupOption);
           }
         }
-      } else {
-        localGroupOptions = [{
-          label: t('用户分组'),
-          value: '',
-        }];
-        setGroups(localGroupOptions);
       }
+
       setGroups(localGroupOptions);
       handleInputChange('group', localGroupOptions[0].value);
     } else {
@@ -151,7 +148,7 @@ const Playground = () => {
     let source = new SSE('/pg/chat/completions', {
       headers: {
         "Content-Type": "application/json",
-        "New-Api-User": getUserIdFromLocalStorage(),
+        "My-API-User": getUserIdFromLocalStorage(),
       },
       method: "POST",
       payload: JSON.stringify(payload),
@@ -257,7 +254,7 @@ const Playground = () => {
     // console.log("Generate Mock Response: ", content);
     setMessage((message) => {
       const lastMessage = message[message.length - 1];
-      let newMessage = { ...lastMessage };
+      let newMessage = {...lastMessage};
       if (lastMessage.status === 'loading' || lastMessage.status === 'incomplete') {
         newMessage = {
           ...newMessage,
@@ -265,7 +262,7 @@ const Playground = () => {
           status: 'incomplete'
         }
       }
-      return [...message.slice(0, -1), newMessage]
+      return [ ...message.slice(0, -1), newMessage ]
     })
   }, []);
 
@@ -297,11 +294,9 @@ const Playground = () => {
     const { detailProps } = props;
     const { clearContextNode, uploadNode, inputNode, sendNode, onClick } = detailProps;
 
-    return <div style={{
-      margin: '8px 16px', display: 'flex', flexDirection: 'row',
-      alignItems: 'flex-end', borderRadius: 16, padding: 10, border: '1px solid var(--semi-color-border)'
-    }}
-      onClick={onClick}
+    return <div style={{margin: '8px 16px', display: 'flex', flexDirection:'row',
+      alignItems: 'flex-end', borderRadius: 16,padding: 10, border: '1px solid var(--semi-color-border)'}}
+                onClick={onClick}
     >
       {/*{uploadNode}*/}
       {inputNode}
@@ -314,7 +309,7 @@ const Playground = () => {
   }, []);
 
   return (
-    <Layout style={{ height: '100%' }}>
+    <Layout style={{height: '100%'}}>
       {(showSettings || !styleState.isMobile) && (
         <Layout.Sider style={{ display: styleState.isMobile ? 'block' : 'initial' }}>
           <Card style={commonOuterStyle}>
@@ -402,7 +397,7 @@ const Playground = () => {
         </Layout.Sider>
       )}
       <Layout.Content>
-        <div style={{ height: '100%', position: 'relative' }}>
+        <div style={{height: '100%', position: 'relative'}}>
           <SettingsToggle />
           <Chat
             chatBoxRenderConfig={{

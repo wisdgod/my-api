@@ -57,7 +57,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (searchParams.get('expired')) {
-      showError(t('未登录或登录已过期，请重新登录！'));
+      showError(t('未登录或登录已过期，请重新登录'));
     }
     let status = localStorage.getItem('status');
     if (status) {
@@ -70,13 +70,14 @@ const LoginForm = () => {
     }
   }, []);
 
+
   const onWeChatLoginClicked = () => {
     setShowWeChatLoginModal(true);
   };
 
   const onSubmitWeChatVerificationCode = async () => {
     if (turnstileEnabled && turnstileToken === '') {
-      showInfo(t('请稍后几秒重试，Turnstile 正在检查用户环境！'));
+      showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
       return;
     }
     const res = await API.get(
@@ -89,7 +90,7 @@ const LoginForm = () => {
       setUserData(data);
       updateAPI();
       navigate('/');
-      showSuccess(t('登录成功！'));
+      showSuccess('登录成功！');
       setShowWeChatLoginModal(false);
     } else {
       showError(message);
@@ -102,7 +103,7 @@ const LoginForm = () => {
 
   async function handleSubmit(e) {
     if (turnstileEnabled && turnstileToken === '') {
-      showInfo(t('请稍后几秒重试，Turnstile 正在检查用户环境！'));
+      showInfo('请稍后几秒重试，Turnstile 正在检查用户环境！');
       return;
     }
     setSubmitted(true);
@@ -119,11 +120,11 @@ const LoginForm = () => {
         userDispatch({ type: 'login', payload: data });
         setUserData(data);
         updateAPI();
-        showSuccess(t('登录成功！'));
+        showSuccess('登录成功！');
         if (username === 'root' && password === '123456') {
           Modal.error({
-            title: t('您正在使用默认密码！'),
-            content: t('请立刻修改默认密码！'),
+            title: '您正在使用默认密码！',
+            content: '请立刻修改默认密码！',
             centered: true,
           });
         }
@@ -132,7 +133,7 @@ const LoginForm = () => {
         showError(message);
       }
     } else {
-      showError(t('请输入用户名和密码！'));
+      showError('请输入用户名和密码！');
     }
   }
 
@@ -159,7 +160,7 @@ const LoginForm = () => {
     if (success) {
       userDispatch({ type: 'login', payload: data });
       localStorage.setItem('user', JSON.stringify(data));
-      showSuccess(t('登录成功！'));
+      showSuccess('登录成功！');
       setUserData(data);
       updateAPI();
       navigate('/');
@@ -188,8 +189,8 @@ const LoginForm = () => {
                 <Form>
                   <Form.Input
                     field={'username'}
-                    label={t('用户名')}
-                    placeholder={t('用户名')}
+                    label={t('用户名/邮箱')}
+                    placeholder={t('用户名/邮箱')}
                     name='username'
                     onChange={(value) => handleChange('username', value)}
                   />
@@ -221,16 +222,16 @@ const LoginForm = () => {
                   }}
                 >
                   <Text>
-                    {t('没有账号请先')} <Link to='/register'>{t('注册账号')}</Link>
+                    {t('没有账户？')} <Link to='/register'>{t('点击注册')}</Link>
                   </Text>
                   <Text>
-                    {t('忘记密码')} <Link to='/reset'>{t('点击重置')}</Link>
+                    {t('忘记密码？')} <Link to='/reset'>{t('点击重置')}</Link>
                   </Text>
                 </div>
                 {status.github_oauth ||
-                  status.linuxdo_oauth ||
-                  status.wechat_login ||
-                  status.telegram_oauth ? (
+                status.wechat_login ||
+                status.telegram_oauth ||
+                status.linuxdo_oauth ? (
                   <>
                     <Divider margin='12px' align='center'>
                       {t('第三方登录')}

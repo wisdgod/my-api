@@ -20,9 +20,6 @@ const SystemSetting = () => {
     GitHubOAuthEnabled: '',
     GitHubClientId: '',
     GitHubClientSecret: '',
-    LinuxDOOAuthEnabled: '',
-    LinuxDOClientId: '',
-    LinuxDOClientSecret: '',
     Notice: '',
     SMTPServer: '',
     SMTPPort: '',
@@ -34,7 +31,7 @@ const SystemSetting = () => {
     WorkerValidKey: '',
     EpayId: '',
     EpayKey: '',
-    Price: 7.2,
+    Price: 7.3,
     MinTopUp: 1,
     TopupGroupRatio: '',
     PayAddress: '',
@@ -56,6 +53,9 @@ const SystemSetting = () => {
     TelegramOAuthEnabled: '',
     TelegramBotToken: '',
     TelegramBotName: '',
+    LinuxDOOAuthEnabled: '',
+    LinuxDOClientId: '',
+    LinuxDOClientSecret: '',
   });
   const [originInputs, setOriginInputs] = useState({});
   let [loading, setLoading] = useState(false);
@@ -159,8 +159,6 @@ const SystemSetting = () => {
       name === 'PayAddress' ||
       name === 'GitHubClientId' ||
       name === 'GitHubClientSecret' ||
-      name === 'LinuxDOClientId' ||
-      name === 'LinuxDOClientSecret' ||
       name === 'WeChatServerAddress' ||
       name === 'WeChatServerToken' ||
       name === 'WeChatAccountQRCodeImageURL' ||
@@ -169,7 +167,9 @@ const SystemSetting = () => {
       name === 'EmailDomainWhitelist' ||
       name === 'TopupGroupRatio' ||
       name === 'TelegramBotToken' ||
-      name === 'TelegramBotName'
+      name === 'TelegramBotName' ||
+      name === 'LinuxDOClientId' ||
+      name === 'LinuxDOClientSecret'
     ) {
       setInputs((inputs) => ({ ...inputs, [name]: value }));
     } else {
@@ -250,30 +250,6 @@ const SystemSetting = () => {
     }
   };
 
-  const submitGitHubOAuth = async () => {
-    if (originInputs['GitHubClientId'] !== inputs.GitHubClientId) {
-      await updateOption('GitHubClientId', inputs.GitHubClientId);
-    }
-    if (
-      originInputs['GitHubClientSecret'] !== inputs.GitHubClientSecret &&
-      inputs.GitHubClientSecret !== ''
-    ) {
-      await updateOption('GitHubClientSecret', inputs.GitHubClientSecret);
-    }
-  };
-
-  const submitLinuxDOOAuth = async () => {
-    if (originInputs['LinuxDOClientId'] !== inputs.LinuxDOClientId) {
-      await updateOption('LinuxDOClientId', inputs.LinuxDOClientId);
-    }
-    if (
-      originInputs['LinuxDOClientSecret'] !== inputs.LinuxDOClientSecret &&
-      inputs.LinuxDOClientSecret !== ''
-    ) {
-      await updateOption('LinuxDOClientSecret', inputs.LinuxDOClientSecret);
-    }
-  };
-
   const submitWeChat = async () => {
     if (originInputs['WeChatServerAddress'] !== inputs.WeChatServerAddress) {
       await updateOption(
@@ -295,6 +271,18 @@ const SystemSetting = () => {
       inputs.WeChatServerToken !== ''
     ) {
       await updateOption('WeChatServerToken', inputs.WeChatServerToken);
+    }
+  };
+
+  const submitGitHubOAuth = async () => {
+    if (originInputs['GitHubClientId'] !== inputs.GitHubClientId) {
+      await updateOption('GitHubClientId', inputs.GitHubClientId);
+    }
+    if (
+      originInputs['GitHubClientSecret'] !== inputs.GitHubClientSecret &&
+      inputs.GitHubClientSecret !== ''
+    ) {
+      await updateOption('GitHubClientSecret', inputs.GitHubClientSecret);
     }
   };
 
@@ -338,6 +326,18 @@ const SystemSetting = () => {
     }
   };
 
+  const submitLinuxDOOAuth = async () => {
+    if (originInputs['LinuxDOClientId'] !== inputs.LinuxDOClientId) {
+      await updateOption('LinuxDOClientId', inputs.LinuxDOClientId);
+    }
+    if (
+      originInputs['LinuxDOClientSecret'] !== inputs.LinuxDOClientSecret &&
+      inputs.LinuxDOClientSecret !== ''
+    ) {
+      await updateOption('LinuxDOClientSecret', inputs.LinuxDOClientSecret);
+    }
+  };
+
   return (
     <Grid columns={1}>
       <Grid.Column>
@@ -360,11 +360,11 @@ const SystemSetting = () => {
           <Header as='h3' inverted={isDark}>
             代理设置（支持{' '}
             <a
-              href='https://github.com/Calcium-Ion/new-api-worker'
+              href='https://github.com/wisdgod/my-api-worker'
               target='_blank'
               rel='noreferrer'
             >
-              new-api-worker
+              my-api-worker
             </a>
             ）
           </Header>
@@ -708,48 +708,6 @@ const SystemSetting = () => {
           </Form.Button>
           <Divider />
           <Header as='h3' inverted={isDark}>
-            配置 LinuxDO OAuth App
-            <Header.Subheader>
-              用以支持通过 LinuxDO 进行登录注册，
-              <a
-                href='https://connect.linux.do/'
-                target='_blank'
-                rel='noreferrer'
-              >
-                点击此处
-              </a>
-              管理你的 LinuxDO OAuth App
-            </Header.Subheader>
-          </Header>
-          <Message>
-            Homepage URL 填 <code>{inputs.ServerAddress}</code>
-            ，Authorization callback URL 填{' '}
-            <code>{`${inputs.ServerAddress}/oauth/linuxdo`}</code>
-          </Message>
-          <Form.Group widths={3}>
-            <Form.Input
-              label='LinuxDO Client ID'
-              name='LinuxDOClientId'
-              onChange={handleInputChange}
-              autoComplete='new-password'
-              value={inputs.LinuxDOClientId}
-              placeholder='输入你注册的 LinuxDO OAuth APP 的 ID'
-            />
-            <Form.Input
-              label='LinuxDO Client Secret'
-              name='LinuxDOClientSecret'
-              onChange={handleInputChange}
-              type='password'
-              autoComplete='new-password'
-              value={inputs.LinuxDOClientSecret}
-              placeholder='敏感信息不会发送到前端显示'
-            />
-          </Form.Group>
-          <Form.Button onClick={submitLinuxDOOAuth}>
-            保存 LinuxDO OAuth 设置
-          </Form.Button>
-          <Divider />
-          <Header as='h3' inverted={isDark}>
             配置 WeChat Server
             <Header.Subheader>
               用以支持通过微信进行登录注册，
@@ -852,6 +810,48 @@ const SystemSetting = () => {
           </Form.Group>
           <Form.Button onClick={submitTurnstile}>
             保存 Turnstile 设置
+          </Form.Button>
+          <Divider />
+          <Header as='h3' inverted={isDark}>
+            配置 LinuxDO OAuth App
+            <Header.Subheader>
+              用以支持通过 LinuxDO 进行登录注册，
+              <a
+                href='https://connect.linux.do/'
+                target='_blank'
+                rel='noreferrer'
+              >
+                点击此处
+              </a>
+              管理你的 LinuxDO OAuth App
+            </Header.Subheader>
+          </Header>
+          <Message>
+            Homepage URL 填 <code>{inputs.ServerAddress}</code>
+            ，Authorization callback URL 填{' '}
+            <code>{`${inputs.ServerAddress}/oauth/linuxdo`}</code>
+          </Message>
+          <Form.Group widths={3}>
+            <Form.Input
+              label='LinuxDO Client ID'
+              name='LinuxDOClientId'
+              onChange={handleInputChange}
+              autoComplete='new-password'
+              value={inputs.LinuxDOClientId}
+              placeholder='输入你注册的 LinuxDO OAuth APP 的 ID'
+            />
+            <Form.Input
+              label='LinuxDO Client Secret'
+              name='LinuxDOClientSecret'
+              onChange={handleInputChange}
+              type='password'
+              autoComplete='new-password'
+              value={inputs.LinuxDOClientSecret}
+              placeholder='敏感信息不会发送到前端显示'
+            />
+          </Form.Group>
+          <Form.Button onClick={submitLinuxDOOAuth}>
+            保存 LinuxDO OAuth 设置
           </Form.Button>
         </Form>
       </Grid.Column>

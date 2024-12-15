@@ -3,13 +3,12 @@ package dify
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
 	"one-api/relay/channel"
 	relaycommon "one-api/relay/common"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Adaptor struct {

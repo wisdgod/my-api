@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -18,8 +19,6 @@ import (
 	relaycommon "one-api/relay/common"
 	"one-api/relay/constant"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Adaptor struct {
@@ -136,6 +135,19 @@ func (a *Adaptor) ConvertAudioRequest(c *gin.Context, info *relaycommon.RelayInf
 		writer := multipart.NewWriter(&requestBody)
 
 		writer.WriteField("model", request.Model)
+
+		// 获取所有表单字段
+		formData := c.Request.PostForm
+
+		// 遍历表单字段并打印输出
+		for key, values := range formData {
+			if key == "model" {
+				continue
+			}
+			for _, value := range values {
+				writer.WriteField(key, value)
+			}
+		}
 
 		// 添加文件字段
 		file, header, err := c.Request.FormFile("file")

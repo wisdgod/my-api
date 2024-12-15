@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Form, Row, Spin } from '@douyinfe/semi-ui';
+import { useTranslation } from 'react-i18next';
 import {
   compareObjects,
   API,
@@ -7,7 +8,6 @@ import {
   showSuccess,
   showWarning,
 } from '../../../helpers';
-import { useTranslation } from 'react-i18next';
 
 export default function SettingsCreditLimit(props) {
   const { t } = useTranslation();

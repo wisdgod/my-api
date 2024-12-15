@@ -297,7 +297,9 @@ func preConsumeQuota(c *gin.Context, preConsumedQuota int, relayInfo *relaycommo
 func returnPreConsumedQuota(_ *gin.Context, relayInfo *relaycommon.RelayInfo, userQuota int, preConsumedQuota int) {
 	if preConsumedQuota != 0 {
 		go func() {
-			err := model.PostConsumeTokenQuota(relayInfo, userQuota, -preConsumedQuota, 0, false)
+			relayInfoCopy := *relayInfo
+
+			err := model.PostConsumeTokenQuota(&relayInfoCopy, userQuota, -preConsumedQuota, 0, false)
 			if err != nil {
 				common.SysError("error return pre-consumed quota: " + err.Error())
 			}

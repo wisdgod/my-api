@@ -2,11 +2,10 @@ package middleware
 
 import (
 	"compress/gzip"
-	"io"
-	"net/http"
-
 	"github.com/andybalholm/brotli"
 	"github.com/gin-gonic/gin"
+	"io"
+	"net/http"
 )
 
 func DecompressRequestMiddleware() gin.HandlerFunc {

@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/bytedance/gopkg/util/gopool"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -204,7 +203,6 @@ func TestChannel(c *gin.Context) {
 		"message": "",
 		"time":    consumedTime,
 	})
-	return
 }
 
 var testAllChannelsLock sync.Mutex
@@ -242,12 +240,12 @@ func testAllChannels(notify bool) error {
 			// request error disables the channel
 			if openaiWithStatusErr != nil {
 				oaiErr := openaiWithStatusErr.Error
-				err = errors.New(fmt.Sprintf("type %s, httpCode %d, code %v, message %s", oaiErr.Type, openaiWithStatusErr.StatusCode, oaiErr.Code, oaiErr.Message))
+				err = fmt.Errorf("type %s, httpCode %d, code %v, message %s", oaiErr.Type, openaiWithStatusErr.StatusCode, oaiErr.Code, oaiErr.Message)
 				shouldBanChannel = service.ShouldDisableChannel(channel.Type, openaiWithStatusErr)
 			}
 
 			if milliseconds > disableThreshold {
-				err = errors.New(fmt.Sprintf("响应时间 %.2fs 超过阈值 %.2fs", float64(milliseconds)/1000.0, float64(disableThreshold)/1000.0))
+				err = fmt.Errorf("响应时间 %.2fs 超过阈值 %.2fs", float64(milliseconds)/1000.0, float64(disableThreshold)/1000.0)
 				shouldBanChannel = true
 			}
 
@@ -290,7 +288,6 @@ func TestAllChannels(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func AutomaticallyTestChannels(frequency int) {

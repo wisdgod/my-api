@@ -57,7 +57,7 @@ func requestOpenAI2Embeddings(request dto.GeneralOpenAIRequest) *OllamaEmbedding
 	}
 }
 
-func ollamaEmbeddingHandler(c *gin.Context, resp *http.Response, promptTokens int, model string, relayMode int) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
+func ollamaEmbeddingHandler(c *gin.Context, resp *http.Response, promptTokens int, model string, _ int) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
 	var ollamaEmbeddingResponse OllamaEmbeddingResponse
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {

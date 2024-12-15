@@ -28,7 +28,6 @@ func GetOptions(c *gin.Context) {
 		"message": "",
 		"data":    options,
 	})
-	return
 }
 
 func UpdateOption(c *gin.Context) {
@@ -104,5 +103,4 @@ func UpdateOption(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }

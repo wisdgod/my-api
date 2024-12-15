@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
@@ -13,6 +12,8 @@ import (
 	"one-api/service"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func oaiImage2Ali(request dto.ImageRequest) *AliImageRequest {
@@ -26,7 +27,7 @@ func oaiImage2Ali(request dto.ImageRequest) *AliImageRequest {
 	return &imageRequest
 }
 
-func updateTask(info *relaycommon.RelayInfo, taskID string, key string) (*AliResponse, error, []byte) {
+func updateTask(_ *relaycommon.RelayInfo, taskID string, key string) (*AliResponse, error, []byte) {
 	url := fmt.Sprintf("/api/v1/tasks/%s", taskID)
 
 	var aliResponse AliResponse
@@ -46,7 +47,7 @@ func updateTask(info *relaycommon.RelayInfo, taskID string, key string) (*AliRes
 	}
 	defer resp.Body.Close()
 
-	responseBody, err := io.ReadAll(resp.Body)
+	responseBody, _ := io.ReadAll(resp.Body)
 
 	var response AliResponse
 	err = json.Unmarshal(responseBody, &response)
@@ -172,6 +173,6 @@ func aliImageHandler(c *gin.Context, resp *http.Response, info *relaycommon.Rela
 	}
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(resp.StatusCode)
-	_, err = c.Writer.Write(jsonResponse)
+	c.Writer.Write(jsonResponse)
 	return nil, nil
 }

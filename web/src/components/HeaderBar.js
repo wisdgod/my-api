@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/User';
 import { useSetTheme, useTheme } from '../context/Theme';
 import { useTranslation } from 'react-i18next';
+
 import { API, getLogo, getSystemName, isMobile, showSuccess } from '../helpers';
 import '../index.css';
 
@@ -23,24 +24,6 @@ import { Avatar, Button, Dropdown, Layout, Nav, Switch } from '@douyinfe/semi-ui
 import { stringToColor } from '../helpers/render';
 import Text from '@douyinfe/semi-ui/lib/es/typography/text';
 import { StyleContext } from '../context/Style/index.js';
-
-// HeaderBar Buttons
-let headerButtons = [
-  {
-    text: '关于',
-    itemKey: 'about',
-    to: '/about',
-    icon: <IconHelpCircle />,
-  },
-];
-
-if (localStorage.getItem('chat_link')) {
-  headerButtons.splice(1, 0, {
-    name: '聊天',
-    to: '/chat',
-    icon: 'comments',
-  });
-}
 
 const HeaderBar = () => {
   const { t, i18n } = useTranslation();
@@ -167,22 +150,22 @@ const HeaderBar = () => {
             }}
             selectedKeys={[]}
             // items={headerButtons}
-            onSelect={(key) => { }}
-            header={styleState.isMobile ? {
+            onSelect={(key) => {}}
+            header={styleState.isMobile?{
               logo: (
                 <>
                   {
                     !styleState.showSider ?
                       <Button icon={<IconMenu />} theme="light" aria-label={t('展开侧边栏')} onClick={
                         () => styleDispatch({ type: 'SET_SIDER', payload: true })
-                      } /> :
+                      } />:
                       <Button icon={<IconIndentLeft />} theme="light" aria-label={t('闭侧边栏')} onClick={
                         () => styleDispatch({ type: 'SET_SIDER', payload: false })
                       } />
                   }
                 </>
               ),
-            } : {
+            }:{
               logo: (
                 <img src={logo} alt='logo' />
               ),
@@ -210,7 +193,7 @@ const HeaderBar = () => {
                 <>
                   <Switch
                     checkedText='🌞'
-                    size={styleState.isMobile ? 'default' : 'large'}
+                    size={styleState.isMobile?'default':'large'}
                     checked={theme === 'dark'}
                     uncheckedText='🌙'
                     onChange={(checked) => {
@@ -222,13 +205,13 @@ const HeaderBar = () => {
                   position='bottomRight'
                   render={
                     <Dropdown.Menu>
-                      <Dropdown.Item
+                      <Dropdown.Item 
                         onClick={() => handleLanguageChange('zh')}
                         type={currentLang === 'zh' ? 'primary' : 'tertiary'}
                       >
                         中文
                       </Dropdown.Item>
-                      <Dropdown.Item
+                      <Dropdown.Item 
                         onClick={() => handleLanguageChange('en')}
                         type={currentLang === 'en' ? 'primary' : 'tertiary'}
                       >
@@ -237,8 +220,8 @@ const HeaderBar = () => {
                     </Dropdown.Menu>
                   }
                 >
-                  <Nav.Item
-                    itemKey={'language'}
+                  <Nav.Item 
+                    itemKey={'language'} 
                     icon={<IconLanguage />}
                   />
                 </Dropdown>
@@ -259,14 +242,14 @@ const HeaderBar = () => {
                       >
                         {userState.user.username[0]}
                       </Avatar>
-                      {styleState.isMobile ? null : <Text>{userState.user.username}</Text>}
+                      {styleState.isMobile?null:<Text>{userState.user.username}</Text>}
                     </Dropdown>
                   </>
                 ) : (
                   <>
                     <Nav.Item
                       itemKey={'login'}
-                      text={!styleState.isMobile ? t('登录') : null}
+                      text={!styleState.isMobile?t('登录'):null}
                       icon={<IconUser />}
                     />
                     {

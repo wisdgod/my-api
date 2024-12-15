@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { API, isMobile, showError, showSuccess } from '../../helpers';
 import { renderQuota, renderQuotaWithPrompt } from '../../helpers/render';
 import Title from '@douyinfe/semi-ui/lib/es/typography/title';
@@ -58,7 +59,7 @@ const EditUser = (props) => {
       showError(error.message);
     }
   };
-  const { t } = useTranslation();
+  const navigate = useNavigate();
   const handleCancel = () => {
     props.handleClose();
   };
@@ -101,7 +102,7 @@ const EditUser = (props) => {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess(t('用户信息更新成功！'));
+      showSuccess('用户信息更新成功！');
       props.refresh();
       props.handleClose();
     } else {
@@ -119,6 +120,8 @@ const EditUser = (props) => {
     setAddQuotaLocal('0');
     setIsModalOpen(true);
   };
+
+  const { t } = useTranslation();
 
   return (
     <>
@@ -203,7 +206,7 @@ const EditUser = (props) => {
                 optionList={groupOptions}
               />
               <div style={{ marginTop: 20 }}>
-                <Typography.Text>{`${t('剩余额度')} ${renderQuotaWithPrompt(quota)}`}</Typography.Text>
+                <Typography.Text>{`${t('剩余额度')}${renderQuotaWithPrompt(quota)}`}</Typography.Text>
               </div>
               <Space>
                 <Input
@@ -218,7 +221,7 @@ const EditUser = (props) => {
               </Space>
             </>
           )}
-          <Divider style={{ marginTop: 20 }}>以下信息不可修改</Divider>
+          <Divider style={{ marginTop: 20 }}>{t('以下信息不可修改')}</Divider>
           <div style={{ marginTop: 20 }}>
             <Typography.Text>{t('已绑定的 GitHub 账户')}</Typography.Text>
           </div>
@@ -272,7 +275,7 @@ const EditUser = (props) => {
         closable={null}
       >
         <div style={{ marginTop: 20 }}>
-          <Typography.Text>{`${t('新额度')} ${renderQuota(quota)} + ${renderQuota(addQuotaLocal)} = ${renderQuota(quota + parseInt(addQuotaLocal))}`}</Typography.Text>
+          <Typography.Text>{`${t('新额度')}${renderQuota(quota)} + ${renderQuota(addQuotaLocal)} = ${renderQuota(quota + parseInt(addQuotaLocal))}`}</Typography.Text>
         </div>
         <Input
           name='addQuotaLocal'

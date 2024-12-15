@@ -30,11 +30,11 @@ type Channel struct {
 	ModelMapping       *string `json:"model_mapping" gorm:"type:varchar(1024);default:''"`
 	//MaxInputTokens     *int    `json:"max_input_tokens" gorm:"default:0"`
 	StatusCodeMapping *string `json:"status_code_mapping" gorm:"type:varchar(1024);default:''"`
-	ResponseMapping   *string `json:"response_mapping" gorm:"type:varchar(1024);default:''"`
 	Priority          *int64  `json:"priority" gorm:"bigint;default:0"`
 	AutoBan           *int    `json:"auto_ban" gorm:"default:1"`
 	OtherInfo         string  `json:"other_info"`
 	Tag               *string `json:"tag" gorm:"index"`
+	Setting           string  `json:"setting" gorm:"type:text"`
 }
 
 func (channel *Channel) GetModels() []string {
@@ -239,13 +239,6 @@ func (channel *Channel) GetStatusCodeMapping() string {
 	return *channel.StatusCodeMapping
 }
 
-func (channel *Channel) GetResponseMapping() string {
-	if channel.ResponseMapping == nil {
-		return ""
-	}
-	return *channel.ResponseMapping
-}
-
 func (channel *Channel) Insert() error {
 	var err error
 	err = DB.Create(channel).Error
@@ -428,18 +421,22 @@ func SearchTags(keyword string, group string, model string, idSort bool) ([]*str
 	keyCol := "`key`"
 	groupCol := "`group`"
 	modelsCol := "`models`"
+
 	// 如果是 PostgreSQL，使用双引号
 	if common.UsingPostgreSQL {
 		keyCol = `"key"`
 		groupCol = `"group"`
 		modelsCol = `"models"`
 	}
+
 	order := "priority desc"
 	if idSort {
 		order = "id desc"
 	}
+
 	// 构造基础查询
 	baseQuery := DB.Model(&Channel{}).Omit(keyCol)
+
 	// 构造WHERE子句
 	var whereClause string
 	var args []interface{}
@@ -457,15 +454,39 @@ func SearchTags(keyword string, group string, model string, idSort bool) ([]*str
 		whereClause = "(id = ? OR name LIKE ? OR " + keyCol + " = ?) AND " + modelsCol + " LIKE ?"
 		args = append(args, common.String2Int(keyword), "%"+keyword+"%", keyword, "%"+model+"%")
 	}
+
 	subQuery := baseQuery.Where(whereClause, args...).
 		Select("tag").
 		Where("tag != ''").
 		Order(order)
+
 	err := DB.Table("(?) as sub", subQuery).
 		Select("DISTINCT tag").
 		Find(&tags).Error
+
 	if err != nil {
 		return nil, err
 	}
+
 	return tags, nil
+}
+
+func (channel *Channel) GetSetting() map[string]interface{} {
+	setting := make(map[string]interface{})
+	if channel.Setting != "" {
+		err := json.Unmarshal([]byte(channel.Setting), &setting)
+		if err != nil {
+			common.SysError("failed to unmarshal setting: " + err.Error())
+		}
+	}
+	return setting
+}
+
+func (channel *Channel) SetSetting(setting map[string]interface{}) {
+	settingBytes, err := json.Marshal(setting)
+	if err != nil {
+		common.SysError("failed to marshal setting: " + err.Error())
+		return
+	}
+	channel.Setting = string(settingBytes)
 }

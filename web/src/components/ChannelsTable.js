@@ -13,12 +13,11 @@ import { CHANNEL_OPTIONS, ITEMS_PER_PAGE } from '../constants';
 import {
   renderGroup,
   renderNumberWithPoint,
-  renderQuota
-} from '../helpers/render';
+  renderQuota} from '../helpers/render';
 import {
   Button, Divider,
   Dropdown,
-  Form,
+  Form, 
   InputNumber, Modal,
   Popconfirm,
   Space,
@@ -35,9 +34,13 @@ import { loadChannelModels } from './utils.js';
 import EditTagModal from '../pages/Channel/EditTagModal.js';
 import { useTranslation } from 'react-i18next';
 
+function renderTimestamp(timestamp) {
+  return <>{timestamp2string(timestamp)}</>;
+}
+
 const ChannelsTable = () => {
   const { t } = useTranslation();
-
+  
   let type2label = undefined;
 
   const renderType = (type) => {
@@ -151,11 +154,11 @@ const ChannelsTable = () => {
     {
       title: t('分组'),
       dataIndex: 'group',
-      render: (text) => {
+      render: (text, record, index) => {
         return (
           <div>
             <Space spacing={2}>
-              {text?.split(',').map((item) => {
+              {text?.split(',').map((item, index) => {
                 return renderGroup(item);
               })}
             </Space>
@@ -166,7 +169,7 @@ const ChannelsTable = () => {
     {
       title: t('类型'),
       dataIndex: 'type',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (record.children === undefined) {
           return <>{renderType(text)}</>;
         } else {
@@ -177,7 +180,7 @@ const ChannelsTable = () => {
     {
       title: t('状态'),
       dataIndex: 'status',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (text === 3) {
           if (record.other_info === '') {
             record.other_info = '{}';
@@ -200,14 +203,14 @@ const ChannelsTable = () => {
     {
       title: t('响应时间'),
       dataIndex: 'response_time',
-      render: (text) => {
+      render: (text, record, index) => {
         return <div>{renderResponseTime(text)}</div>;
       }
     },
     {
       title: t('已用/剩余'),
       dataIndex: 'expired_time',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (record.children === undefined) {
           return (
             <div>
@@ -242,9 +245,9 @@ const ChannelsTable = () => {
       }
     },
     {
-      title: '优先级',
+      title: t('优先级'),
       dataIndex: 'priority',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (record.children === undefined) {
           return (
             <div>
@@ -269,8 +272,8 @@ const ChannelsTable = () => {
               keepFocus={true}
               onBlur={(e) => {
                 Modal.warning({
-                  title: '修改子渠道优先级',
-                  content: '确定要修改所有子渠道优先级为 ' + e.target.value + ' 吗？',
+                  title: t('修改子渠道优先级'),
+                  content: t('确定要修改所有子渠道优先级为 ') + e.target.value + t(' 吗？'),
                   onOk: () => {
                     if (e.target.value === '') {
                       return;
@@ -291,9 +294,9 @@ const ChannelsTable = () => {
       }
     },
     {
-      title: '权重',
+      title: t('权重'),
       dataIndex: 'weight',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (record.children === undefined) {
           return (
             <div>
@@ -318,8 +321,8 @@ const ChannelsTable = () => {
               keepFocus={true}
               onBlur={(e) => {
                 Modal.warning({
-                  title: '修改子渠道权重',
-                  content: '确定要修改所有子渠道权重为 ' + e.target.value + ' 吗？',
+                  title: t('修改子渠道权重'),
+                  content: t('确定要修改所有子渠道权重为 ') + e.target.value + t(' 吗？'),
                   onOk: () => {
                     if (e.target.value === '') {
                       return;
@@ -342,7 +345,7 @@ const ChannelsTable = () => {
     {
       title: '',
       dataIndex: 'operate',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (record.children === undefined) {
           return (
             <div>
@@ -531,7 +534,7 @@ const ChannelsTable = () => {
     for (let i = 0; i < channels.length; i++) {
       channels[i].key = '' + channels[i].id;
       let test_models = [];
-      channels[i].models.split(',').forEach((item) => {
+      channels[i].models.split(',').forEach((item, index) => {
         test_models.push({
           node: 'item',
           name: item,
@@ -544,7 +547,7 @@ const ChannelsTable = () => {
       if (!enableTagMode) {
         channelDates.push(channels[i]);
       } else {
-        let tag = channels[i].tag ? channels[i].tag : "";
+        let tag = channels[i].tag?channels[i].tag:"";
         // find from channelTags
         let tagIndex = channelTags[tag];
         let tagChannelDates = undefined;
@@ -587,7 +590,7 @@ const ChannelsTable = () => {
           tagChannelDates.group = channels[i].group;
         } else {
           let channelGroupsStr = channels[i].group;
-          channelGroupsStr.split(',').forEach((item) => {
+          channelGroupsStr.split(',').forEach((item, index) => {
             if (tagChannelDates.group.indexOf(item) === -1) {
               // join
               tagChannelDates.group += ',' + item;
@@ -638,26 +641,26 @@ const ChannelsTable = () => {
   };
 
   const copySelectedChannel = async (record) => {
-    const channelToCopy = record;
-    channelToCopy.name += '_复制';
+    const channelToCopy = record
+    channelToCopy.name += t('_复制');
     channelToCopy.created_time = null;
     channelToCopy.balance = 0;
     channelToCopy.used_quota = 0;
     if (!channelToCopy) {
-      showError('渠道未找到，请刷新页面后重试。');
+      showError(t('渠道未找到，请刷新页面后重试。'));
       return;
     }
     try {
       const newChannel = { ...channelToCopy, id: undefined };
       const response = await API.post('/api/channel/', newChannel);
       if (response.data.success) {
-        showSuccess('渠道复制成功');
+        showSuccess(t('渠道复制成功'));
         await refresh();
       } else {
         showError(response.data.message);
       }
     } catch (error) {
-      showError('渠道复制失败: ' + error.message);
+      showError(t('渠道复制失败: ') + error.message);
     }
   };
 
@@ -716,7 +719,7 @@ const ChannelsTable = () => {
     }
     const { success, message } = res.data;
     if (success) {
-      showSuccess('操作成功完成！');
+      showSuccess(t('操作成功完成！'));
       let channel = res.data.data;
       let newChannels = [...channels];
       if (action === 'delete') {
@@ -872,16 +875,6 @@ const ChannelsTable = () => {
     }
   };
 
-  const clearRegexCache = async () => {
-    const res = await API.post(`/api/channel/clear_regex_cache`);
-    const { success, message, data } = res.data;
-    if (success) {
-      showSuccess(t('已清除 ${data} 条缓存！').replace('${data}', data));
-    } else {
-      showError(message);
-    }
-  };
-
   let pageData = channels.slice(
     (activePage - 1) * pageSize,
     activePage * pageSize
@@ -891,7 +884,7 @@ const ChannelsTable = () => {
     setActivePage(page);
     if (page === Math.ceil(channels.length / pageSize) + 1) {
       // In this case we have to load more data and then append them.
-      loadChannels(page - 1, pageSize, idSort, enableTagMode).then(() => {
+      loadChannels(page - 1, pageSize, idSort, enableTagMode).then((r) => {
       });
     }
   };
@@ -959,7 +952,7 @@ const ChannelsTable = () => {
     setShowEdit(false);
   };
 
-  const handleRow = (record) => {
+  const handleRow = (record, index) => {
     if (record.status !== 1) {
       return {
         style: {
@@ -1155,21 +1148,10 @@ const ChannelsTable = () => {
               {t('修复数据库一致性')}
             </Button>
           </Popconfirm>
-          <Popconfirm
-            title={t('确定是否要清空正则表达式编译缓存？')}
-            content={t('此修改可能导致非流请求变慢')}
-            okType={'warning'}
-            onConfirm={clearRegexCache}
-            position={'top'}
-          >
-            <Button theme='light' type='warning' style={{ marginRight: 8 }}>
-              {t('清空正则编译缓存')}
-            </Button>
-          </Popconfirm>
         </Space>
       </div>
       <div style={{ marginTop: 20 }}>
-        <Space>
+      <Space>
           <Typography.Text strong>{t('标签聚合模式')}</Typography.Text>
           <Switch
             checked={enableTagMode}
@@ -1196,7 +1178,7 @@ const ChannelsTable = () => {
           total: channelCount,
           pageSizeOpts: [10, 20, 50, 100],
           showSizeChanger: true,
-          formatPageText: () => '',
+          formatPageText: (page) => '',
           onPageSizeChange: (size) => {
             handlePageSizeChange(size).then();
           },

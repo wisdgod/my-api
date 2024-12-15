@@ -3,6 +3,8 @@ package zhipu
 import (
 	"bufio"
 	"encoding/json"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"io"
 	"net/http"
 	"one-api/common"
@@ -12,9 +14,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 // https://open.bigmodel.cn/doc/api#chatglm_std

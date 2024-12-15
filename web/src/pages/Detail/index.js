@@ -16,6 +16,7 @@ import {
   renderNumber,
   renderQuota,
   renderQuotaNumberWithDigit,
+  stringToColor,
   modelToColor,
 } from '../../helpers/render';
 import { UserContext } from '../../context/User/index.js';
@@ -130,7 +131,6 @@ const Detail = (props) => {
       subtext: `${t('总计')}：${renderQuota(consumeQuota, 2)}`,
     },
     bar: {
-      // The state style of bar
       state: {
         hover: {
           stroke: '#000',
@@ -156,9 +156,7 @@ const Detail = (props) => {
           },
         ],
         updateContent: (array) => {
-          // sort by value
           array.sort((a, b) => b.value - a.value);
-          // add $
           let sum = 0;
           for (let i = 0; i < array.length; i++) {
             sum += parseFloat(array[i].value);
@@ -167,7 +165,6 @@ const Detail = (props) => {
               4,
             );
           }
-          // add to first
           array.unshift({
             key: t('总计'),
             value: renderQuotaNumberWithDigit(sum, 4),
@@ -210,7 +207,7 @@ const Detail = (props) => {
         if (data.length === 0) {
           data.push({
             count: 0,
-            model_name: t('无数据'),
+            model_name: '无数据',
             quota: 0,
             created_at: now.getTime() / 1000,
           });
@@ -260,12 +257,12 @@ const Detail = (props) => {
       uniqueTimes.add(timestamp2string1(item.created_at, dataExportDefaultTime));
       totalTokens += item.token_used;
     });
-
+    
     // 处理颜色映射
     const newModelColors = {};
     Array.from(uniqueModels).forEach((modelName) => {
-      newModelColors[modelName] = modelColorMap[modelName] ||
-        modelColors[modelName] ||
+      newModelColors[modelName] = modelColorMap[modelName] || 
+        modelColors[modelName] || 
         modelToColor(modelName);
     });
     setModelColors(newModelColors);
@@ -274,7 +271,7 @@ const Detail = (props) => {
     for (let item of data) {
       totalQuota += item.quota;
       totalTimes += item.count;
-
+      
       let pieItem = newPieData.find((it) => it.type === item.model_name);
       if (pieItem) {
         pieItem.value += item.count;
@@ -293,9 +290,9 @@ const Detail = (props) => {
       const generateTimePoints = () => {
         let lastTime = Math.max(...data.map(item => item.created_at));
         let points = [];
-        let interval = dataExportDefaultTime === 'hour' ? 3600
-          : dataExportDefaultTime === 'day' ? 86400
-            : 604800;
+        let interval = dataExportDefaultTime === 'hour' ? 3600 
+                      : dataExportDefaultTime === 'day' ? 86400 
+                      : 604800;
 
         for (let i = 0; i < 7; i++) {
           points.push(timestamp2string1(lastTime - (i * interval), dataExportDefaultTime));
@@ -309,8 +306,8 @@ const Detail = (props) => {
     // 为每个时间点和模型生成数据
     timePoints.forEach(time => {
       Array.from(uniqueModels).forEach(model => {
-        let existingData = data.find(item =>
-          timestamp2string1(item.created_at, dataExportDefaultTime) === time &&
+        let existingData = data.find(item => 
+          timestamp2string1(item.created_at, dataExportDefaultTime) === time && 
           item.model_name === model
         );
 
@@ -350,7 +347,7 @@ const Detail = (props) => {
         specified: newModelColors
       }
     }));
-
+    
     setPieData(newPieData);
     setLineData(newLineData);
     setConsumeQuota(totalQuota);
@@ -360,9 +357,9 @@ const Detail = (props) => {
 
   const getUserData = async () => {
     let res = await API.get(`/api/user/self`);
-    const { success, message, data } = res.data;
+    const {success, message, data} = res.data;
     if (success) {
-      userDispatch({ type: 'login', payload: data });
+      userDispatch({type: 'login', payload: data});
     } else {
       showError(message);
     }
@@ -456,8 +453,8 @@ const Detail = (props) => {
             </>
           </Form>
           <Spin spinning={loading}>
-            <Row gutter={{ xs: 16, sm: 16, md: 16, lg: 24, xl: 24, xxl: 24 }} style={{ marginTop: 20 }} type="flex" justify="space-between">
-              <Col span={styleState.isMobile ? 24 : 8}>
+            <Row gutter={{ xs: 16, sm: 16, md: 16, lg: 24, xl: 24, xxl: 24 }} style={{marginTop: 20}} type="flex" justify="space-between">
+              <Col span={styleState.isMobile?24:8}>
                 <Card className='panel-desc-card'>
                   <Descriptions row size="small">
                     <Descriptions.Item itemKey={t('当前余额')}>
@@ -472,7 +469,7 @@ const Detail = (props) => {
                   </Descriptions>
                 </Card>
               </Col>
-              <Col span={styleState.isMobile ? 24 : 8}>
+              <Col span={styleState.isMobile?24:8}>
                 <Card>
                   <Descriptions row size="small">
                     <Descriptions.Item itemKey={t('统计额度')}>
@@ -506,7 +503,7 @@ const Detail = (props) => {
                 </Card>
               </Col>
             </Row>
-            <Card style={{ marginTop: 20 }}>
+            <Card style={{marginTop: 20}}>
               <Tabs type="line" defaultActiveKey="1">
                 <Tabs.TabPane tab={t('消耗分布')} itemKey="1">
                   <div style={{ height: 500 }}>

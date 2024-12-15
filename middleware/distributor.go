@@ -138,7 +138,7 @@ func getModelRequest(c *gin.Context) (*ModelRequest, bool, error) {
 			midjourneyModel, mjErr, success := service.GetMjRequestModel(relayMode, &midjourneyRequest)
 			if mjErr != nil {
 				abortWithMidjourneyMessage(c, http.StatusBadRequest, mjErr.Code, mjErr.Description)
-				return nil, false, fmt.Errorf(mjErr.Description)
+				return nil, false, errors.New(mjErr.Description)
 			}
 			if midjourneyModel == "" {
 				if !success {
@@ -213,13 +213,13 @@ func SetupContextForSelectedChannel(c *gin.Context, channel *model.Channel, mode
 	c.Set("channel_id", channel.Id)
 	c.Set("channel_name", channel.Name)
 	c.Set("channel_type", channel.Type)
-	if nil != channel.OpenAIOrganization && "" != *channel.OpenAIOrganization {
+	c.Set("channel_setting", channel.GetSetting())
+	if channel.OpenAIOrganization != nil && *channel.OpenAIOrganization != "" {
 		c.Set("channel_organization", *channel.OpenAIOrganization)
 	}
 	c.Set("auto_ban", channel.GetAutoBan())
 	c.Set("model_mapping", channel.GetModelMapping())
 	c.Set("status_code_mapping", channel.GetStatusCodeMapping())
-	c.Set("response_mapping", channel.GetResponseMapping())
 	c.Request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", channel.Key))
 	c.Set("base_url", channel.GetBaseURL())
 	// TODO: api_version统一

@@ -12,12 +12,12 @@ type TaskStatus string
 
 const (
 	TaskStatusNotStart   TaskStatus = "NOT_START"
-	TaskStatusSubmitted             = "SUBMITTED"
-	TaskStatusQueued                = "QUEUED"
-	TaskStatusInProgress            = "IN_PROGRESS"
-	TaskStatusFailure               = "FAILURE"
-	TaskStatusSuccess               = "SUCCESS"
-	TaskStatusUnknown               = "UNKNOWN"
+	TaskStatusSubmitted  TaskStatus = "SUBMITTED"
+	TaskStatusQueued     TaskStatus = "QUEUED"
+	TaskStatusInProgress TaskStatus = "IN_PROGRESS"
+	TaskStatusFailure    TaskStatus = "FAILURE"
+	TaskStatusSuccess    TaskStatus = "SUCCESS"
+	TaskStatusUnknown    TaskStatus = "UNKNOWN"
 )
 
 type Task struct {
@@ -172,9 +172,8 @@ func TaskGetAllTasks(startIdx int, num int, queryParams SyncTaskQueryParams) []*
 
 func GetAllUnFinishSyncTasks(limit int) []*Task {
 	var tasks []*Task
-	var err error
 	// get all tasks progress is not 100%
-	err = DB.Where("progress != ?", "100%").Limit(limit).Order("id").Find(&tasks).Error
+	err := DB.Where("progress != ?", "100%").Limit(limit).Order("id").Find(&tasks).Error
 	if err != nil {
 		return nil
 	}
@@ -215,8 +214,7 @@ func GetByTaskIds(userId int, taskIds []any) ([]*Task, error) {
 		return nil, nil
 	}
 	var task []*Task
-	var err error
-	err = DB.Where("user_id = ? and task_id in (?)", userId, taskIds).
+	err := DB.Where("user_id = ? and task_id in (?)", userId, taskIds).
 		Find(&task).Error
 	if err != nil {
 		return nil, err
@@ -229,15 +227,11 @@ func TaskUpdateProgress(id int64, progress string) error {
 }
 
 func (Task *Task) Insert() error {
-	var err error
-	err = DB.Create(Task).Error
-	return err
+	return DB.Create(Task).Error
 }
 
 func (Task *Task) Update() error {
-	var err error
-	err = DB.Save(Task).Error
-	return err
+	return DB.Save(Task).Error
 }
 
 func TaskBulkUpdate(TaskIds []string, params map[string]any) error {

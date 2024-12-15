@@ -3,14 +3,13 @@ package claude
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
 	"one-api/relay/channel"
 	relaycommon "one-api/relay/common"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 const (

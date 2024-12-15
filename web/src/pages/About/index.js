@@ -45,7 +45,7 @@ const About = () => {
               </a>
               <p>
                 My API © 2024 wisdgod | 基于 One API v0.5.4 © 2023
-                JustSong 与 New API v0.3.0.0-alpha.3 © 2023 CalciumIon。
+                JustSong 与 New API v0.4.0.0 © 2023 CalciumIon。
               </p>
               <p>
                 本项目根据MIT许可证授权，需在遵守Apache-2.0协议的前提下使用。

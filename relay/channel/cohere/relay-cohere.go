@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
@@ -13,6 +12,8 @@ import (
 	"one-api/service"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func requestOpenAI2Cohere(textRequest dto.GeneralOpenAIRequest) *CohereRequest {
@@ -167,7 +168,7 @@ func cohereStreamHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 	return nil, usage
 }
 
-func cohereHandler(c *gin.Context, resp *http.Response, modelName string, promptTokens int) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
+func cohereHandler(c *gin.Context, resp *http.Response, modelName string, _ int) (*dto.OpenAIErrorWithStatusCode, *dto.Usage) {
 	createdTime := common.GetTimestamp()
 	responseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -209,7 +210,7 @@ func cohereHandler(c *gin.Context, resp *http.Response, modelName string, prompt
 	}
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(resp.StatusCode)
-	_, err = c.Writer.Write(jsonResponse)
+	c.Writer.Write(jsonResponse)
 	return nil, &usage
 }
 
@@ -248,6 +249,6 @@ func cohereRerankHandler(c *gin.Context, resp *http.Response, info *relaycommon.
 	}
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(resp.StatusCode)
-	_, err = c.Writer.Write(jsonResponse)
+	c.Writer.Write(jsonResponse)
 	return nil, &usage
 }

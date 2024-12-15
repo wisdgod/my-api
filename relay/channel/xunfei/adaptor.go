@@ -2,6 +2,7 @@ package xunfei
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
@@ -9,8 +10,6 @@ import (
 	relaycommon "one-api/relay/common"
 	"one-api/service"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Adaptor struct {

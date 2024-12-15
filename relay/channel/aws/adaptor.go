@@ -2,13 +2,12 @@ package aws
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/dto"
 	"one-api/relay/channel/claude"
 	relaycommon "one-api/relay/common"
-
-	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -50,6 +49,7 @@ func (a *Adaptor) ConvertRequest(c *gin.Context, info *relaycommon.RelayInfo, re
 	var claudeReq *claude.ClaudeRequest
 	var err error
 	claudeReq, err = claude.RequestOpenAI2ClaudeMessage(*request)
+
 	c.Set("request_model", request.Model)
 	c.Set("converted_request", claudeReq)
 	return claudeReq, err

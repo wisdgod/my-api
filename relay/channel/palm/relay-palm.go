@@ -3,14 +3,13 @@ package palm
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
 	"one-api/constant"
 	"one-api/dto"
 	"one-api/service"
-
-	"github.com/gin-gonic/gin"
 )
 
 // https://developers.generativeai.google/api/rest/generativelanguage/models/generateMessage#request-body

@@ -242,16 +242,14 @@ func CountTokenRealtime(info *relaycommon.RelayInfo, request dto.RealtimeEvent, 
 		}
 	case dto.RealtimeEventTypeResponseDone:
 		// count tools token
-		if !info.IsFirstRequest {
-			if len(info.RealtimeTools) > 0 {
-				for _, tool := range info.RealtimeTools {
-					toolTokens, err := CountTokenInput(tool, model)
-					if err != nil {
-						return 0, 0, err
-					}
-					textToken += 8
-					textToken += toolTokens
+		if !info.IsFirstRequest && len(info.RealtimeTools) > 0 {
+			for _, tool := range info.RealtimeTools {
+				toolTokens, err := CountTokenInput(tool, model)
+				if err != nil {
+					return 0, 0, err
 				}
+				textToken += 8
+				textToken += toolTokens
 			}
 		}
 	}

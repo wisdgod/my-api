@@ -20,7 +20,8 @@ import {
   Space,
   Spin,
   Table,
-  Tag
+  Tag,
+  Tooltip
 } from '@douyinfe/semi-ui';
 import { ITEMS_PER_PAGE } from '../constants';
 import {
@@ -34,6 +35,15 @@ import Paragraph from '@douyinfe/semi-ui/lib/es/typography/paragraph';
 import { getLogOther } from '../helpers/other.js';
 
 const { Header } = Layout;
+
+function renderTimestamp(timestamp) {
+  return <>{timestamp2string(timestamp)}</>;
+}
+
+const MODE_OPTIONS = [
+  { key: 'all', text: 'all', value: 'all' },
+  { key: 'self', text: 'current user', value: 'self' },
+];
 
 const colors = [
   'amber',
@@ -130,7 +140,7 @@ const LogsTable = () => {
         </Tag>
       );
     }
-  }
+  } 
 
   const columns = [
     {
@@ -141,7 +151,7 @@ const LogsTable = () => {
       title: t('渠道'),
       dataIndex: 'channel',
       className: isAdmin() ? 'tableShow' : 'tableHiddle',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return isAdminUser ? (
           record.type === 0 || record.type === 2 ? (
             <div>
@@ -167,7 +177,7 @@ const LogsTable = () => {
       title: t('用户'),
       dataIndex: 'username',
       className: isAdmin() ? 'tableShow' : 'tableHiddle',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return isAdminUser ? (
           <div>
             <Avatar
@@ -188,7 +198,7 @@ const LogsTable = () => {
     {
       title: t('令牌'),
       dataIndex: 'token_name',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return record.type === 0 || record.type === 2 ? (
           <div>
             <Tag
@@ -210,14 +220,14 @@ const LogsTable = () => {
     {
       title: t('类型'),
       dataIndex: 'type',
-      render: (text) => {
+      render: (text, record, index) => {
         return <>{renderType(text)}</>;
       },
     },
     {
       title: t('模型'),
       dataIndex: 'model_name',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return record.type === 0 || record.type === 2 ? (
           <>
             <Tag
@@ -239,7 +249,7 @@ const LogsTable = () => {
     {
       title: t('用时/首字'),
       dataIndex: 'use_time',
-      render: (text, record) => {
+      render: (text, record, index) => {
         if (record.is_stream) {
           let other = getLogOther(record.other);
           return (
@@ -266,7 +276,7 @@ const LogsTable = () => {
     {
       title: t('提示'),
       dataIndex: 'prompt_tokens',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return record.type === 0 || record.type === 2 ? (
           <>{<span> {text} </span>}</>
         ) : (
@@ -277,7 +287,7 @@ const LogsTable = () => {
     {
       title: t('补全'),
       dataIndex: 'completion_tokens',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return parseInt(text) > 0 &&
           (record.type === 0 || record.type === 2) ? (
           <>{<span> {text} </span>}</>
@@ -289,7 +299,7 @@ const LogsTable = () => {
     {
       title: t('花费'),
       dataIndex: 'quota',
-      render: (text, record) => {
+      render: (text, record, index) => {
         return record.type === 0 || record.type === 2 ? (
           <>{renderQuota(text, 6)}</>
         ) : (
@@ -301,7 +311,7 @@ const LogsTable = () => {
       title: t('重试'),
       dataIndex: 'retry',
       className: isAdmin() ? 'tableShow' : 'tableHiddle',
-      render: (text, record) => {
+      render: (text, record, index) => {
         let content = t('渠道') + `：${record.channel}`;
         if (record.other !== '') {
           let other = JSON.parse(record.other);
@@ -327,7 +337,7 @@ const LogsTable = () => {
     {
       title: t('详情'),
       dataIndex: 'content',
-      render: (text, record) => {
+      render: (text, record, index) => {
         let other = getLogOther(record.other);
         if (other == null || record.type !== 2) {
           return (
@@ -352,14 +362,14 @@ const LogsTable = () => {
           other.group_ratio,
         );
         return (
-          <Paragraph
-            ellipsis={{
-              rows: 2,
-            }}
-            style={{ maxWidth: 240 }}
-          >
-            {content}
-          </Paragraph>
+            <Paragraph
+                ellipsis={{
+                  rows: 2,
+                }}
+                style={{ maxWidth: 240 }}
+            >
+              {content}
+            </Paragraph>
         );
       },
     },
@@ -585,7 +595,7 @@ const LogsTable = () => {
 
   const handlePageChange = (page) => {
     setActivePage(page);
-    loadLogs(page, pageSize, logType).then(() => { });
+    loadLogs(page, pageSize, logType).then((r) => {});
   };
 
   const handlePageSizeChange = async (size) => {
@@ -625,7 +635,7 @@ const LogsTable = () => {
     handleEyeClick();
   }, []);
 
-  const expandRowRender = (record) => {
+  const expandRowRender = (record, index) => {
     return <Descriptions data={expandData[record.key]} />;
   };
 
@@ -724,14 +734,14 @@ const LogsTable = () => {
             <Form.Section></Form.Section>
           </>
         </Form>
-        <div style={{ marginTop: 10 }}>
+        <div style={{marginTop:10}}>
           <Select
-            defaultValue='0'
-            style={{ width: 120 }}
-            onChange={(value) => {
-              setLogType(parseInt(value));
-              loadLogs(0, pageSize, parseInt(value));
-            }}
+              defaultValue='0'
+              style={{ width: 120 }}
+              onChange={(value) => {
+                setLogType(parseInt(value));
+                loadLogs(0, pageSize, parseInt(value));
+              }}
           >
             <Select.Option value='0'>{t('全部')}</Select.Option>
             <Select.Option value='1'>{t('充值')}</Select.Option>

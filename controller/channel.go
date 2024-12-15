@@ -85,7 +85,6 @@ func GetAllChannels(c *gin.Context) {
 		"message": "",
 		"data":    channelData,
 	})
-	return
 }
 
 func FetchUpstreamModels(c *gin.Context) {
@@ -203,7 +202,6 @@ func SearchChannels(c *gin.Context) {
 		"message": "",
 		"data":    channelData,
 	})
-	return
 }
 
 func GetChannel(c *gin.Context) {
@@ -228,7 +226,6 @@ func GetChannel(c *gin.Context) {
 		"message": "",
 		"data":    channel,
 	})
-	return
 }
 
 func AddChannel(c *gin.Context) {
@@ -286,7 +283,6 @@ func AddChannel(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func DeleteChannel(c *gin.Context) {
@@ -304,7 +300,6 @@ func DeleteChannel(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func DeleteDisabledChannel(c *gin.Context) {
@@ -321,7 +316,6 @@ func DeleteDisabledChannel(c *gin.Context) {
 		"message": "",
 		"data":    rows,
 	})
-	return
 }
 
 type ChannelTag struct {
@@ -356,7 +350,6 @@ func DisableTagChannels(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func EnableTagChannels(c *gin.Context) {
@@ -381,7 +374,6 @@ func EnableTagChannels(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func EditTagChannels(c *gin.Context) {
@@ -413,7 +405,6 @@ func EditTagChannels(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 type ChannelBatch struct {
@@ -443,7 +434,6 @@ func DeleteChannelBatch(c *gin.Context) {
 		"message": "",
 		"data":    len(channelBatch.Ids),
 	})
-	return
 }
 
 func UpdateChannel(c *gin.Context) {
@@ -489,30 +479,5 @@ func UpdateChannel(c *gin.Context) {
 		"success": true,
 		"message": "",
 		"data":    channel,
-	})
-	return
-}
-
-func ClearRegexCache(c *gin.Context) {
-	var count int
-	// 遍历 RegexCache，统计条数并删除每个键
-	common.RegexCache.Range(func(key, value interface{}) bool {
-		count++
-		common.RegexCache.Delete(key)
-		return true
-	})
-
-	if count == 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"success": false,
-			"message": "无缓存，不需要清除！",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "",
-		"data":    count,
 	})
 }

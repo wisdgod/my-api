@@ -37,10 +37,6 @@ func CovertGemini2OpenAI(textRequest dto.GeneralOpenAIRequest) *GeminiChatReques
 				Category:  "HARM_CATEGORY_DANGEROUS_CONTENT",
 				Threshold: common.GeminiSafetySetting,
 			},
-			{
-				Category:  "HARM_CATEGORY_CIVIC_INTEGRITY",
-				Threshold: common.GeminiSafetySetting,
-			},
 		},
 		GenerationConfig: GeminiChatGenerationConfig{
 			Temperature:     textRequest.Temperature,

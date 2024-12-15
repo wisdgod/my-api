@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Col, Form, Row, Spin, DatePicker } from '@douyinfe/semi-ui';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import {
   compareObjects,
   API,
@@ -8,7 +9,6 @@ import {
   showSuccess,
   showWarning,
 } from '../../../helpers';
-import { useTranslation } from 'react-i18next';
 
 export default function SettingsLog(props) {
   const { t } = useTranslation();
@@ -98,7 +98,7 @@ export default function SettingsLog(props) {
           getFormApi={(formAPI) => (refForm.current = formAPI)}
           style={{ marginBottom: 15 }}
         >
-          <Form.Section text={'日志设置'}>
+          <Form.Section text={t('日志设置')}>
             <Row gutter={16}>
               <Col span={8}>
                 <Form.Switch

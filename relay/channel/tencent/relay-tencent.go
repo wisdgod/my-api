@@ -165,7 +165,7 @@ func tencentHandler(c *gin.Context, resp *http.Response) (*dto.OpenAIErrorWithSt
 	}
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(resp.StatusCode)
-	_, err = c.Writer.Write(jsonResponse)
+	c.Writer.Write(jsonResponse)
 	return nil, &fullTextResponse.Usage
 }
 

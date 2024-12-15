@@ -24,10 +24,12 @@ export default function GeneralSettings(props) {
   });
   const refForm = useRef();
   const [inputsRow, setInputsRow] = useState(inputs);
+
   function onChange(value, e) {
     const name = e.target.id;
     setInputs((inputs) => ({ ...inputs, [name]: value }));
   }
+
   function onSubmit() {
     const updateArray = compareObjects(inputs, inputsRow);
     if (!updateArray.length) return showWarning(t('你似乎并没有修改什么'));
@@ -73,6 +75,7 @@ export default function GeneralSettings(props) {
     setInputsRow(structuredClone(currentInputs));
     refForm.current.setValues(currentInputs);
   }, [props.options]);
+
   return (
     <>
       <Spin spinning={loading}>

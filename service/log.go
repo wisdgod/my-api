@@ -1,10 +1,9 @@
 package service
 
 import (
+	"github.com/gin-gonic/gin"
 	"one-api/dto"
 	relaycommon "one-api/relay/common"
-
-	"github.com/gin-gonic/gin"
 )
 
 func GenerateTextOtherInfo(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, modelRatio, groupRatio, completionRatio, modelPrice float64) map[string]interface{} {

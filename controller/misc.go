@@ -25,7 +25,6 @@ func TestStatus(c *gin.Context) {
 		"success": true,
 		"message": "Server is running",
 	})
-	return
 }
 
 func GetStatus(c *gin.Context) {
@@ -68,7 +67,6 @@ func GetStatus(c *gin.Context) {
 			"chats":                    constant.Chats,
 		},
 	})
-	return
 }
 
 func GetNotice(c *gin.Context) {
@@ -79,7 +77,6 @@ func GetNotice(c *gin.Context) {
 		"message": "",
 		"data":    common.OptionMap["Notice"],
 	})
-	return
 }
 
 func GetAbout(c *gin.Context) {
@@ -90,7 +87,6 @@ func GetAbout(c *gin.Context) {
 		"message": "",
 		"data":    common.OptionMap["About"],
 	})
-	return
 }
 
 func GetMidjourney(c *gin.Context) {
@@ -101,7 +97,6 @@ func GetMidjourney(c *gin.Context) {
 		"message": "",
 		"data":    common.OptionMap["Midjourney"],
 	})
-	return
 }
 
 func GetHomePageContent(c *gin.Context) {
@@ -112,7 +107,6 @@ func GetHomePageContent(c *gin.Context) {
 		"message": "",
 		"data":    common.OptionMap["HomePageContent"],
 	})
-	return
 }
 
 func SendEmailVerification(c *gin.Context) {
@@ -186,7 +180,6 @@ func SendEmailVerification(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func SendPasswordResetEmail(c *gin.Context) {
@@ -225,7 +218,6 @@ func SendPasswordResetEmail(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 type PasswordResetRequest struct {
@@ -235,7 +227,7 @@ type PasswordResetRequest struct {
 
 func ResetPassword(c *gin.Context) {
 	var req PasswordResetRequest
-	err := json.NewDecoder(c.Request.Body).Decode(&req)
+	json.NewDecoder(c.Request.Body).Decode(&req)
 	if req.Email == "" || req.Token == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -251,7 +243,7 @@ func ResetPassword(c *gin.Context) {
 		return
 	}
 	password := common.GenerateVerificationCode(12)
-	err = model.ResetUserPasswordByEmail(req.Email, password)
+	err := model.ResetUserPasswordByEmail(req.Email, password)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
@@ -265,5 +257,4 @@ func ResetPassword(c *gin.Context) {
 		"message": "",
 		"data":    password,
 	})
-	return
 }

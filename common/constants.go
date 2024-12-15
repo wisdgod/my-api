@@ -34,9 +34,6 @@ var SessionSecret = uuid.New().String()
 var OptionMap map[string]string
 var OptionMapRWMutex sync.RWMutex
 
-// 定义一个全局的缓存，用于存储编译后的正则表达式
-var RegexCache = sync.Map{}
-
 var ItemsPerPage = 10
 var MaxRecentItems = 100
 
@@ -53,7 +50,6 @@ var RegisterEnabled = true
 var EmailDomainRestrictionEnabled = false // 是否启用邮箱域名限制
 var EmailAliasRestrictionEnabled = false  // 是否启用邮箱别名限制
 var EmailDomainWhitelist = []string{
-	"wisdgod.com",
 	"gmail.com",
 	"163.com",
 	"126.com",

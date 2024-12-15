@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"one-api/common"
 	"one-api/model"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func GetAllTokens(c *gin.Context) {
@@ -33,7 +34,6 @@ func GetAllTokens(c *gin.Context) {
 		"message": "",
 		"data":    tokens,
 	})
-	return
 }
 
 func SearchTokens(c *gin.Context) {
@@ -53,7 +53,6 @@ func SearchTokens(c *gin.Context) {
 		"message": "",
 		"data":    tokens,
 	})
-	return
 }
 
 func GetToken(c *gin.Context) {
@@ -79,7 +78,6 @@ func GetToken(c *gin.Context) {
 		"message": "",
 		"data":    token,
 	})
-	return
 }
 
 func GetTokenStatus(c *gin.Context) {
@@ -158,7 +156,6 @@ func AddToken(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func DeleteToken(c *gin.Context) {
@@ -176,7 +173,6 @@ func DeleteToken(c *gin.Context) {
 		"success": true,
 		"message": "",
 	})
-	return
 }
 
 func UpdateToken(c *gin.Context) {
@@ -248,5 +244,4 @@ func UpdateToken(c *gin.Context) {
 		"message": "",
 		"data":    cleanToken,
 	})
-	return
 }

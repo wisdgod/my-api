@@ -145,7 +145,6 @@ export function renderModelPrice(
   completionRatio,
   groupRatio,
 ) {
-  // 1 ratio = $0.002 / 1K tokens
   if (modelPrice !== -1) {
     return i18next.t('模型价格：${{price}} * 分组倍率：{{ratio}} = ${{total}}', {
       price: modelPrice,
@@ -156,7 +155,6 @@ export function renderModelPrice(
     if (completionRatio === undefined) {
       completionRatio = 0;
     }
-    // 这里的 *2 是因为 1倍率=0.002刀，请勿删除
     let inputRatioPrice = modelRatio * 2.0;
     let completionRatioPrice = modelRatio * 2.0 * completionRatio;
     let price =
@@ -198,7 +196,6 @@ export function renderModelPriceSimple(
   modelPrice = -1,
   groupRatio,
 ) {
-  // 1 ratio = $0.002 / 1K tokens
   if (modelPrice !== -1) {
     return i18next.t('价格：${{price}} * 分组：{{ratio}}', {
       price: modelPrice,
@@ -299,7 +296,7 @@ const colors = [
 // 基础10色色板 (N ≤ 10)
 const baseColors = [
   '#1664FF', // 主色
-  '#1AC6FF',
+  '#1AC6FF', 
   '#FF8A00',
   '#3CC780',
   '#7442D4',
@@ -343,7 +340,7 @@ export const modelColorMap = {
   'gpt-3.5-turbo-0613': 'rgb(60,179,113)', // 海洋绿
   'gpt-3.5-turbo-1106': 'rgb(32,178,170)', // 浅海洋绿
   'gpt-3.5-turbo-16k': 'rgb(149,252,206)', // 淡橙色
-  'gpt-3.5-turbo-16k-0613': 'rgb(119,255,214)', // 淡桃色
+  'gpt-3.5-turbo-16k-0613': 'rgb(119,255,214)', // 淡桃���
   'gpt-3.5-turbo-instruct': 'rgb(175,238,238)', // 粉蓝色
   'gpt-4': 'rgb(135,206,235)', // 天蓝色
   // 'gpt-4-0314': 'rgb(70,130,180)', // 钢蓝色
@@ -366,7 +363,7 @@ export const modelColorMap = {
   'text-embedding-ada-002': 'rgb(255,182,193)', // 浅粉红
   'text-embedding-v1': 'rgb(255,174,185)', // 浅粉红色（略有区别）
   'text-moderation-latest': 'rgb(255,130,171)', // 强粉色
-  'text-moderation-stable': 'rgb(255,160,122)', // 浅珊瑚色（与Babbage相同，表示同一类功能）
+  'text-moderation-stable': 'rgb(255,160,122)', // 浅珊瑚色（���Babbage相同，表示同一类功能）
   'tts-1': 'rgb(255,140,0)', // 深橙色
   'tts-1-1106': 'rgb(255,165,0)', // 橙色
   'tts-1-hd': 'rgb(255,215,0)', // 金色
@@ -394,7 +391,7 @@ export function modelToColor(modelName) {
 
   // 3. 根据模型名称长度选择不同的色板
   const colorPalette = modelName.length > 10 ? extendedColors : baseColors;
-
+  
   // 4. 使用hash值选择颜色
   const index = hash % colorPalette.length;
   return colorPalette[index];
@@ -402,12 +399,9 @@ export function modelToColor(modelName) {
 
 export function stringToColor(str) {
   let sum = 0;
-  // 对字符串中的每个字符进行操作
   for (let i = 0; i < str.length; i++) {
-    // 将字符的ASCII值加到sum中
     sum += str.charCodeAt(i);
   }
-  // 使用模运算得到个位数
   let i = sum % colors.length;
   return colors[i];
 }

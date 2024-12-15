@@ -262,9 +262,9 @@ const RegisterForm = () => {
                   </Text>
                 </div>
                 {status.github_oauth ||
-                  status.wechat_login ||
-                  status.telegram_oauth ||
-                  status.linuxdo_oauth ? (
+                status.wechat_login ||
+                status.telegram_oauth ||
+                status.linuxdo_oauth ? (
                   <>
                     <Divider margin='12px' align='center'>
                       {t('第三方登录')}

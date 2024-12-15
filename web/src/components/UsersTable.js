@@ -382,7 +382,7 @@ const UsersTable = () => {
     setActivePage(page);
     if (page === Math.ceil(users.length / ITEMS_PER_PAGE) + 1) {
       // In this case we have to load more data and then append them.
-      loadUsers(page - 1).then((r) => { });
+      loadUsers(page - 1).then((r) => {});
     }
   };
 

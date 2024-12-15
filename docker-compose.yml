@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   my-api:
-    image: calciumion/my-api:latest
+    image: wisdgod/my-api:latest
     # build: .
     container_name: my-api
     restart: always
@@ -36,16 +36,16 @@ services:
     restart: always
 
   mysql:
-    image: mysql:latest
+    image: mysql:8.2
     container_name: mysql
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=my-api
+      MYSQL_ROOT_PASSWORD: 123456  # Ensure this matches the password in SQL_DSN
+      MYSQL_DATABASE: my-api
     volumes:
       - mysql_data:/var/lib/mysql
     # ports:
-    #   - "3306:3306"
+    #   - "3306:3306"  # If you want to access MySQL from outside Docker, uncomment
 
 volumes:
   mysql_data:

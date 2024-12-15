@@ -4,13 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"one-api/common"
 	"one-api/dto"
 	relaycommon "one-api/relay/common"
 	"one-api/service"
-
-	"github.com/gin-gonic/gin"
 )
 
 func getRerankPromptToken(rerankRequest dto.RerankRequest) int {

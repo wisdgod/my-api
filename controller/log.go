@@ -81,7 +81,6 @@ func GetUserLogs(c *gin.Context) {
 			"page_size": pageSize,
 		},
 	})
-	return
 }
 
 func SearchAllLogs(c *gin.Context) {
@@ -99,7 +98,6 @@ func SearchAllLogs(c *gin.Context) {
 		"message": "",
 		"data":    logs,
 	})
-	return
 }
 
 func SearchUserLogs(c *gin.Context) {
@@ -118,7 +116,6 @@ func SearchUserLogs(c *gin.Context) {
 		"message": "",
 		"data":    logs,
 	})
-	return
 }
 
 func GetLogByKey(c *gin.Context) {
@@ -157,7 +154,6 @@ func GetLogsStat(c *gin.Context) {
 			"tpm":   stat.Tpm,
 		},
 	})
-	return
 }
 
 func GetLogsSelfStat(c *gin.Context) {
@@ -180,7 +176,6 @@ func GetLogsSelfStat(c *gin.Context) {
 			//"token": tokenNum,
 		},
 	})
-	return
 }
 
 func DeleteHistoryLogs(c *gin.Context) {
@@ -205,5 +200,4 @@ func DeleteHistoryLogs(c *gin.Context) {
 		"message": "",
 		"data":    count,
 	})
-	return
 }

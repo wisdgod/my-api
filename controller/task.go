@@ -84,7 +84,7 @@ func UpdateSunoTaskAll(ctx context.Context, taskChannelM map[int][]string, taskM
 	for channelId, taskIds := range taskChannelM {
 		err := updateSunoTaskAll(ctx, channelId, taskIds, taskM)
 		if err != nil {
-			common.LogError(ctx, fmt.Sprintf("渠道 #%d 更新异步任务失败: %v", channelId, err))
+			common.LogError(ctx, fmt.Sprintf("渠道 #%d 更新异步任务失败: %v", channelId, err.Error()))
 		}
 	}
 	return nil
@@ -121,7 +121,7 @@ func updateSunoTaskAll(ctx context.Context, channelId int, taskIds []string, tas
 	}
 	if resp.StatusCode != http.StatusOK {
 		common.LogError(ctx, fmt.Sprintf("Get Task status code: %d", resp.StatusCode))
-		return errors.New(fmt.Sprintf("Get Task status code: %d", resp.StatusCode))
+		return fmt.Errorf("Get Task status code: %d", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 	responseBody, err := io.ReadAll(resp.Body)
@@ -217,10 +217,7 @@ func checkTaskNeedUpdate(oldTask *model.Task, newTask dto.SunoDataResponse) bool
 		return newData[i] < newData[j]
 	})
 
-	if string(oldData) != string(newData) {
-		return true
-	}
-	return false
+	return string(oldData) != string(newData)
 }
 
 func GetAllTask(c *gin.Context) {

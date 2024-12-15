@@ -343,7 +343,7 @@ const RedemptionsTable = () => {
     setActivePage(page);
     if (page === Math.ceil(redemptions.length / ITEMS_PER_PAGE) + 1) {
       // In this case we have to load more data and then append them.
-      loadRedemptions(page - 1).then((r) => { });
+      loadRedemptions(page - 1).then((r) => {});
     }
   };
 
@@ -352,8 +352,8 @@ const RedemptionsTable = () => {
     activePage * ITEMS_PER_PAGE,
   );
   const rowSelection = {
-    onSelect: (record, selected) => { },
-    onSelectAll: (selected, selectedRows) => { },
+    onSelect: (record, selected) => {},
+    onSelectAll: (selected, selectedRows) => {},
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedKeys(selectedRows);
     },
@@ -391,35 +391,35 @@ const RedemptionsTable = () => {
           onChange={handleKeywordChange}
         />
       </Form>
-      <Divider style={{ margin: '5px 0 15px 0' }} />
+      <Divider style={{margin:'5px 0 15px 0'}}/>
       <div>
         <Button
-          theme='light'
-          type='primary'
-          style={{ marginRight: 8 }}
-          onClick={() => {
-            setEditingRedemption({
-              id: undefined,
-            });
-            setShowEdit(true);
-          }}
+            theme='light'
+            type='primary'
+            style={{ marginRight: 8 }}
+            onClick={() => {
+              setEditingRedemption({
+                id: undefined,
+              });
+              setShowEdit(true);
+            }}
         >
           {t('添加兑换码')}
         </Button>
         <Button
-          label={t('复制所选兑换码')}
-          type='warning'
-          onClick={async () => {
-            if (selectedKeys.length === 0) {
-              showError(t('请至少选择一个兑换码！'));
-              return;
-            }
-            let keys = '';
-            for (let i = 0; i < selectedKeys.length; i++) {
-              keys += selectedKeys[i].name + '    ' + selectedKeys[i].key + '\n';
-            }
-            await copyText(keys);
-          }}
+            label={t('复制所选兑换码')}
+            type='warning'
+            onClick={async () => {
+              if (selectedKeys.length === 0) {
+                showError(t('请至少选择一个兑换码！'));
+                return;
+              }
+              let keys = '';
+              for (let i = 0; i < selectedKeys.length; i++) {
+                keys += selectedKeys[i].name + '    ' + selectedKeys[i].key + '\n';
+              }
+              await copyText(keys);
+            }}
         >
           {t('复制所选兑换码到剪贴板')}
         </Button>

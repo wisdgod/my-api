@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   API,
@@ -24,7 +24,8 @@ import {
   Checkbox,
   Banner
 } from '@douyinfe/semi-ui';
-import { getChannelModels } from '../../components/utils.js';
+import { Divider } from 'semantic-ui-react';
+import { getChannelModels, loadChannelModels } from '../../components/utils.js';
 import axios from 'axios';
 
 const MODEL_MAPPING_EXAMPLE = {
@@ -33,10 +34,6 @@ const MODEL_MAPPING_EXAMPLE = {
 
 const STATUS_CODE_MAPPING_EXAMPLE = {
   400: '500'
-};
-
-const RESPONSE_MAPPING_EXAMPLE = {
-  'pattern': 'replacement',
 };
 
 const REGION_EXAMPLE = {
@@ -83,7 +80,6 @@ const EditChannel = (props) => {
     other: '',
     model_mapping: '',
     status_code_mapping: '',
-    response_mapping: '',
     models: [],
     auto_ban: 1,
     test_model: '',
@@ -226,7 +222,7 @@ const EditChannel = (props) => {
               'Authorization': `Bearer ${key}`
             }
           });
-          if (res.data && res.data?.success) {
+          if (res.data) {
             models.push(...res.data.data.map((model) => model.id));
           } else {
             err = true;
@@ -300,7 +296,7 @@ const EditChannel = (props) => {
     fetchModels().then();
     fetchGroups().then();
     if (isEdit) {
-      loadChannel().then(() => { });
+      loadChannel().then(() => {});
     } else {
       setInputs(originInputs);
       let localModels = getChannelModels(inputs.type);
@@ -888,7 +884,7 @@ const EditChannel = (props) => {
             </Typography.Text>
           </div>
           <TextArea
-            placeholder={t('此项可选，用于复写返回的状态码，比如将claude渠道的400错误复写为500（用于重试），请勿滥用该功能，例如：') +
+            placeholder={t('此项可选，用于复写返回的状态码，比如将claude渠道的400错误复写为500（用于重试），请勿滥用该功能，例如：') + 
               '\n' + JSON.stringify(STATUS_CODE_MAPPING_EXAMPLE, null, 2)}
             name="status_code_mapping"
             onChange={(value) => {
@@ -909,34 +905,6 @@ const EditChannel = (props) => {
                 'status_code_mapping',
                 JSON.stringify(STATUS_CODE_MAPPING_EXAMPLE, null, 2)
               );
-            }}
-          >
-            {t('填入模板')}
-          </Typography.Text>
-          <div style={{ marginTop: 10 }}>
-            <Typography.Text strong>
-              {t('非流响应内容替换（正则表达式）')}：
-            </Typography.Text>
-          </div>
-          <TextArea
-            placeholder={t('请输入 JSON 格式的替换规则，例如：') +
-              '\n' + JSON.stringify(RESPONSE_MAPPING_EXAMPLE, null, 2)}
-            name='response_mapping'
-            onChange={(value) => {
-              handleInputChange('response_mapping', value);
-            }}
-            autosize
-            value={inputs.response_mapping}
-            autoComplete='new-password'
-          />
-          <Typography.Text
-            style={{
-              color: 'rgba(var(--semi-blue-5), 1)',
-              userSelect: 'none',
-              cursor: 'pointer',
-            }}
-            onClick={() => {
-              handleInputChange('response_mapping', JSON.stringify(RESPONSE_MAPPING_EXAMPLE, null, 2));
             }}
           >
             {t('填入模板')}
@@ -996,6 +964,42 @@ const EditChannel = (props) => {
             value={inputs.weight}
             autoComplete="new-password"
           />
+          {inputs.type === 8 && (
+          <>
+            <div style={{ marginTop: 10 }}>
+              <Typography.Text strong>
+                {t('渠道额外设置')}：
+              </Typography.Text>
+            </div>
+            <TextArea
+              placeholder={t('此项可选，用于配置渠道特定设置，为一个 JSON 字符串，例如：') + '\n{\n  "force_format": true\n}'}
+              name="setting"
+              onChange={(value) => {
+                handleInputChange('setting', value);
+              }}
+              autosize
+              value={inputs.setting}
+              autoComplete="new-password"
+            />
+            <Typography.Text
+              style={{
+                color: 'rgba(var(--semi-blue-5), 1)', 
+                userSelect: 'none',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                handleInputChange(
+                  'setting',
+                  JSON.stringify({
+                    force_format: true
+                  }, null, 2)
+                );
+              }}
+            >
+              {t('填入模板')}
+              </Typography.Text>
+            </>
+          )}  
         </Spin>
       </SideSheet>
     </>

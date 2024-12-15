@@ -98,7 +98,7 @@ func SetApiRouter(router *gin.Engine) {
 			channelRoute.POST("/batch", controller.DeleteChannelBatch)
 			channelRoute.POST("/fix", controller.FixChannelsAbilities)
 			channelRoute.GET("/fetch_models/:id", controller.FetchUpstreamModels)
-			channelRoute.POST("/clear_regex_cache", controller.ClearRegexCache)
+
 		}
 		tokenRoute := apiRouter.Group("/token")
 		tokenRoute.Use(middleware.UserAuth())

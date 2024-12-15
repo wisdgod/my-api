@@ -3,6 +3,7 @@ package tencent
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"one-api/common"
@@ -12,8 +13,6 @@ import (
 	"one-api/service"
 	"strconv"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Adaptor struct {

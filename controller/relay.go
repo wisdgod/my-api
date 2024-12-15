@@ -12,7 +12,6 @@ import (
 	"one-api/middleware"
 	"one-api/model"
 	"one-api/relay"
-	"one-api/relay/constant"
 	relayconstant "one-api/relay/constant"
 	"one-api/service"
 	"strings"
@@ -40,7 +39,7 @@ func relayHandler(c *gin.Context, relayMode int) *dto.OpenAIErrorWithStatusCode 
 	return err
 }
 
-func wsHandler(c *gin.Context, ws *websocket.Conn, relayMode int) *dto.OpenAIErrorWithStatusCode {
+func wsHandler(c *gin.Context, _ *websocket.Conn, relayMode int) *dto.OpenAIErrorWithStatusCode {
 	var err *dto.OpenAIErrorWithStatusCode
 	switch relayMode {
 	default:
@@ -102,7 +101,7 @@ func Playground(c *gin.Context) {
 }
 
 func Relay(c *gin.Context) {
-	relayMode := constant.Path2RelayMode(c.Request.URL.Path)
+	relayMode := relayconstant.Path2RelayMode(c.Request.URL.Path)
 	requestId := c.GetString(common.RequestIdKey)
 	group := c.GetString("group")
 	originalModel := c.GetString("original_model")
@@ -156,15 +155,14 @@ func WssRelay(c *gin.Context) {
 	// 将 HTTP 连接升级为 WebSocket 连接
 
 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	defer ws.Close()
-
 	if err != nil {
 		openaiErr := service.OpenAIErrorWrapper(err, "get_channel_failed", http.StatusInternalServerError)
 		service.WssError(c, ws, openaiErr.Error)
 		return
 	}
+	defer ws.Close()
 
-	relayMode := constant.Path2RelayMode(c.Request.URL.Path)
+	relayMode := relayconstant.Path2RelayMode(c.Request.URL.Path)
 	requestId := c.GetString(common.RequestIdKey)
 	group := c.GetString("group")
 	//wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01
@@ -213,7 +211,7 @@ func relayRequest(c *gin.Context, relayMode int, channel *model.Channel) *dto.Op
 	return relayHandler(c, relayMode)
 }
 
-func wssRequest(c *gin.Context, ws *websocket.Conn, relayMode int, channel *model.Channel) *dto.OpenAIErrorWithStatusCode {
+func wssRequest(c *gin.Context, ws *websocket.Conn, _ int, channel *model.Channel) *dto.OpenAIErrorWithStatusCode {
 	addUsedChannel(c, channel.Id)
 	requestBody, _ := common.GetRequestBody(c)
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(requestBody))
@@ -242,7 +240,7 @@ func getChannel(c *gin.Context, group, originalModel string, retryCount int) (*m
 	}
 	channel, err := model.CacheGetRandomSatisfiedChannel(group, originalModel, retryCount)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("获取重试渠道失败: %s", err.Error()))
+		return nil, fmt.Errorf("获取重试渠道失败: %s", err.Error())
 	}
 	middleware.SetupContextForSelectedChannel(c, channel, originalModel)
 	return channel, nil
@@ -276,10 +274,7 @@ func shouldRetry(c *gin.Context, openaiErr *dto.OpenAIErrorWithStatusCode, retry
 	}
 	if openaiErr.StatusCode == http.StatusBadRequest {
 		channelType := c.GetInt("channel_type")
-		if channelType == common.ChannelTypeAnthropic {
-			return true
-		}
-		return false
+		return channelType == common.ChannelTypeAnthropic
 	}
 	if openaiErr.StatusCode == 408 {
 		// azure处理超时不重试
@@ -381,7 +376,7 @@ func RelayTask(c *gin.Context) {
 		common.LogInfo(c, fmt.Sprintf("using channel #%d to retry (remain times %d)", channel.Id, i))
 		middleware.SetupContextForSelectedChannel(c, channel, originalModel)
 
-		requestBody, err := common.GetRequestBody(c)
+		requestBody, _ := common.GetRequestBody(c)
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(requestBody))
 		taskErr = taskRelayHandler(c, relayMode)
 	}
@@ -409,7 +404,7 @@ func taskRelayHandler(c *gin.Context, relayMode int) *dto.TaskError {
 	return err
 }
 
-func shouldRetryTaskRelay(c *gin.Context, channelId int, taskErr *dto.TaskError, retryTimes int) bool {
+func shouldRetryTaskRelay(c *gin.Context, _ int, taskErr *dto.TaskError, retryTimes int) bool {
 	if taskErr == nil {
 		return false
 	}

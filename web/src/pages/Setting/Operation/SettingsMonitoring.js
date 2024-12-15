@@ -66,6 +66,7 @@ export default function SettingsMonitoring(props) {
     setInputsRow(structuredClone(currentInputs));
     refForm.current.setValues(currentInputs);
   }, [props.options]);
+  
   return (
     <>
       <Spin spinning={loading}>
@@ -98,7 +99,7 @@ export default function SettingsMonitoring(props) {
                   label={t('额度提醒阈值')}
                   step={1}
                   min={0}
-                  suffix={t('Token')}
+                  suffix={'Token'}
                   extraText={t('低于此额度时将发送邮件提醒用户')}
                   placeholder={''}
                   field={'QuotaRemindThreshold'}
